@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TambahGrupActivity">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#E0E0E0">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_prev" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:text="Tambah Grup"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <!-- CONTENT -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- WAKTU -->
+            <TextView
+                android:text="Waktu Pendataan"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etTanggal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:hint="22 Nov 2024"
+                    android:background="@drawable/bg_input"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etJam"
+                    android:layout_width="80dp"
+                    android:hint="11:12"
+                    android:background="@drawable/bg_input"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- JENIS SERAGAM -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:text="Jenis Seragam"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Spinner
+                android:id="@+id/spSeragam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"/>
+
+            <!-- KAMAR -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:text="Kamar"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Spinner
+                android:id="@+id/spKamar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"/>
+
+            <!-- BERAT -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:text="Berat (Kg)"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etBerat"
+                android:hint="Masukkan Berat"
+                android:inputType="numberDecimal"
+                android:background="@drawable/bg_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- JUMLAH ORANG -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:text="Jumlah Orang"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etJumlah"
+                android:hint="Jumlah Orang"
+                android:background="@drawable/bg_input"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- BUTTON -->
+            <Button
+                android:id="@+id/btnNext"
+                android:text="Selanjutnya"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
