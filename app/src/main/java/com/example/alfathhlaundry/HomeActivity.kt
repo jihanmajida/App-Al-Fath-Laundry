@@ -67,7 +67,7 @@ class HomeActivity : AppCompatActivity() {
         }
         // ===== FAB =====
         fabTambah.setOnClickListener {
-            startActivity(Intent(this, TambahGrupActivity::class.java))
+            startActivity(Intent(this, AddEditGroupActivity::class.java))
         }
     }
 

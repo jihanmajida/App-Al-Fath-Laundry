@@ -15,7 +15,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class TambahGrupActivity : AppCompatActivity() {
+class AddEditGroupActivity : AppCompatActivity() {
 
     private lateinit var etTanggal: EditText
     private lateinit var etJam: EditText
@@ -25,7 +25,7 @@ class TambahGrupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tambah_grup)
+        setContentView(R.layout.activity_add_edit_group)
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val btnNext = findViewById<Button>(R.id.btnNext)
@@ -57,7 +57,7 @@ class TambahGrupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, AddDataCustomerActivity::class.java)
+            val intent = Intent(this, AddEditDataCustomerActivity::class.java)
             intent.putExtra("JUMLAH", jumlah)
             startActivity(intent)
         }

@@ -28,7 +28,7 @@
             android:name=".FormDataGrupActivity"
             android:exported="false" />
         <activity
-            android:name=".AddDataCustomerActivity"
+            android:name=".AddEditDataCustomerActivity"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"

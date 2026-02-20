@@ -45,7 +45,7 @@ class ListDataFragment : Fragment() {
             listData,
             onEditClick = { item ->
                 //aksi edit
-                val intent = Intent(requireContext(), EditDataActivity::class.java)
+                val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
                 intent.putExtra("berat", item.berat)
                 intent.putExtra("judul", item.judul)
                 intent.putExtra("nama", item.nama)
