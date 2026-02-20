@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/tvWaktu"
                 android:text="Kamis, 22 Nov 2024 - 11:12"
                 android:background="@drawable/bg_input"
                 android:padding="12dp"
@@ -60,6 +61,7 @@
 
             <!-- JENIS SERAGAM -->
             <TextView
+                android:id="@+id/tvJenis"
                 android:text="Jenis Seragam"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
