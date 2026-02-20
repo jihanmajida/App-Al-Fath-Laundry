@@ -1,7 +1,6 @@
 package com.example.alfathhlaundry
 
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -59,7 +57,7 @@ class TambahGrupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, TambahDataSiswaActivity::class.java)
+            val intent = Intent(this, AddDataCustomerActivity::class.java)
             intent.putExtra("JUMLAH", jumlah)
             startActivity(intent)
         }

@@ -13,6 +13,12 @@
         android:theme="@style/Theme.AlFathhLaundry"
         tools:targetApi="31">
         <activity
+            android:name=".RvShowData"
+            android:exported="false" />
+        <activity
+            android:name=".ShowDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ItemDataPelangganActivity"
             android:exported="false" />
         <activity
@@ -22,7 +28,7 @@
             android:name=".FormDataGrupActivity"
             android:exported="false" />
         <activity
-            android:name=".TambahDataSiswaActivity"
+            android:name=".AddDataCustomerActivity"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"
