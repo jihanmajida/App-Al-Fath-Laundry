@@ -42,6 +42,7 @@
                 android:text="Baju"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:layout_height="wrap_content"/>
 
             <TextView
@@ -51,6 +52,7 @@
                 android:text="Rok"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:layout_height="wrap_content"/>
 
             <TextView
@@ -60,6 +62,7 @@
                 android:text="Jilbab"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:layout_height="wrap_content"/>
 
             <TextView
@@ -69,6 +72,7 @@
                 android:text="Kaos"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
@@ -130,10 +134,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Keterangan"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/tvKeterangan"
+            android:id="@+id/etKeterangan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
