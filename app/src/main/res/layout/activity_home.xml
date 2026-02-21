@@ -24,10 +24,12 @@
             <!--Previous-->
             <ImageButton
                 android:id="@+id/btnPrev"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_prev"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:padding="8dp"/>
 
             <!-- TEXT TANGGAL -->
             <LinearLayout
@@ -55,26 +57,32 @@
             <!--Next-->
             <ImageButton
                 android:id="@+id/btnNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_next"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:padding="8dp"/>
 
             <!--Search-->
             <ImageButton
                 android:id="@+id/btnSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_search"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:padding="8dp"/>
 
             <!--LogOut-->
             <ImageButton
                 android:id="@+id/btnLogOut"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_logout"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:padding="8dp"/>
         </LinearLayout>
 
         <!-- FRAGMENT CONTAINER -->
