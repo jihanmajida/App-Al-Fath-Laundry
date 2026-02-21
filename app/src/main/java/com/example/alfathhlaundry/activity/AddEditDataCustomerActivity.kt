@@ -1,12 +1,16 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.adapter.FormAdapter
+import com.example.alfathhlaundry.model.FormData
+import com.example.alfathhlaundry.R
 
 class AddEditDataCustomerActivity : AppCompatActivity() {
 
@@ -35,7 +39,9 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = FormAdapter()
+        val jumlahForm = intent.getIntExtra("JUMLAH", 0)
+        Log.i("Jumlah", jumlahForm.toString())
+        adapter = FormAdapter(formLength = jumlahForm)
         rvForm.layoutManager = LinearLayoutManager(this)
         rvForm.adapter = adapter
     }
@@ -46,17 +52,17 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         if (mode == "EDIT") {
             tvTitle.text = "Edit Data Group"
 
-            val data = FormData(
-                nama = intent.getStringExtra("NAMA") ?: "",
-                baju = intent.getIntExtra("BAJU", 0),
-                rok = intent.getIntExtra("ROK", 0),
-                jilbab = intent.getIntExtra("JILBAB", 0),
-                kaos = intent.getIntExtra("KAOS", 0),
-                keterangan = intent.getStringExtra("KETERANGAN") ?: ""
-            )
-            rvForm.post {
-                adapter.setData(data)
-            }
+//            val data = FormData(
+//                nama = intent.getStringExtra("NAMA") ?: "",
+//                baju = intent.getIntExtra("BAJU", 0),
+//                rok = intent.getIntExtra("ROK", 0),
+//                jilbab = intent.getIntExtra("JILBAB", 0),
+//                kaos = intent.getIntExtra("KAOS", 0),
+//                keterangan = intent.getStringExtra("KETERANGAN") ?: ""
+//            )
+//            rvForm.post {
+//                adapter.setData(data)
+//            }
         } else {
             tvTitle.text = "Tambah Data Group"
         }

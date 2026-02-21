@@ -1,4 +1,4 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.activity
 
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
+import com.example.alfathhlaundry.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

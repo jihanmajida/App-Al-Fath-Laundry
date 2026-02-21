@@ -1,4 +1,4 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.model
 
 data class ItemListData (
     val berat: String,

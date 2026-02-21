@@ -1,12 +1,11 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.telecom.Call
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.R
 
 class ShowDataActivity : AppCompatActivity() {
 

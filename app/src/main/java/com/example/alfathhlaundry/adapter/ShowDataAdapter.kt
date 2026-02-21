@@ -1,10 +1,12 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.model.ModelData
+import com.example.alfathhlaundry.R
 
 class ShowDataAdapter (private val dataList: List<ModelData>) :
 RecyclerView.Adapter<ShowDataAdapter.ViewHolder>(){

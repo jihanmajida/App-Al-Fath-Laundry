@@ -13,25 +13,25 @@
         android:theme="@style/Theme.AlFathhLaundry"
         tools:targetApi="31">
         <activity
-            android:name=".AddEditGroupActivity"
+            android:name=".activity.AddEditGroupActivity"
             android:exported="false" />
         <activity
-            android:name=".ShowDataActivity"
+            android:name=".activity.ShowDataActivity"
             android:exported="false" />
         <activity
-            android:name=".AddEditDataCustomerActivity"
+            android:name=".activity.AddEditDataCustomerActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

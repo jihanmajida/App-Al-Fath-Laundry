@@ -1,4 +1,4 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,8 @@ import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.model.ItemListData
+import com.example.alfathhlaundry.R
 
 class ListDataAdapter (
     private val listData: List<ItemListData>,

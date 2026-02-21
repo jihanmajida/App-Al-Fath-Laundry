@@ -1,12 +1,15 @@
-package com.example.alfathhlaundry
+package com.example.alfathhlaundry.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.model.FormData
+import com.example.alfathhlaundry.R
 
-class FormAdapter : RecyclerView.Adapter<FormAdapter.FormViewHolder>() {
+class FormAdapter(val formLength: Int) : RecyclerView.Adapter<FormAdapter.FormViewHolder>() {
 
     var etNama: EditText? = null
     var etBaju: EditText? = null
@@ -32,7 +35,10 @@ class FormAdapter : RecyclerView.Adapter<FormAdapter.FormViewHolder>() {
         return FormViewHolder(view)
     }
 
-    override fun getItemCount(): Int = 1   // cuma 1 form
+    override fun getItemCount(): Int {
+        Log.i("JUMLAH_ADAPTER",formLength.toString())
+        return formLength
+    }
 
     override fun onBindViewHolder(holder: FormViewHolder, position: Int) {}
 

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddEditDataCustomerActivity">
+    tools:context=".activity.AddEditDataCustomerActivity">
 
     <!-- APP BAR -->
     <RelativeLayout
@@ -22,6 +22,7 @@
             android:layout_height="24dp"/>
 
         <TextView
+            android:id="@+id/tvTitle"
             android:text="Tambah Data Pelanggan"
             android:textStyle="bold"
             android:textSize="16sp"
