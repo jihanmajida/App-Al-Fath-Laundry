@@ -71,10 +71,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    // =========================
     // UPDATE TANGGAL KE UI
-    // =========================
-
     private fun updateTanggalUI() {
         val localeID = Locale("id", "ID")
 
@@ -89,36 +86,28 @@ class HomeActivity : AppCompatActivity() {
         tvTanggal.text = tanggal
     }
 
-    // =========================
     // LOAD DATA BERDASARKAN TANGGAL
-    // =========================
     private fun loadDataByDate() {
         // TODO:
         // ambil data dari database / API berdasarkan currentDate
         // contoh sementara:
         val hasData = false
-
         showFragment(hasData)
     }
 
-    // =========================
     // GANTI FRAGMENT
-    // =========================
     private fun showFragment(hasData: Boolean) {
         val fragment = if (hasData) {
             ListDataFragment()
         } else {
             EmptyFragment()
         }
-
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 
-    // =========================
     // DIALOG LOGOUT
-    // =========================
     private fun showLogoutDialog() {
         AlertDialog.Builder(this)
             .setMessage("Apakah anda yakin ingin keluar?")

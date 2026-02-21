@@ -48,7 +48,7 @@ class AddEditGroupActivity : AppCompatActivity() {
         setupDatePicker()
         setupSpinner()
 
-        // NEXT -> EDIT DATA
+        // NEXT -> Add Data Customer
         btnNext.setOnClickListener {
             val jumlah = etJumlah.text.toString().toIntOrNull()
 
@@ -64,7 +64,6 @@ class AddEditGroupActivity : AppCompatActivity() {
     }
 
     // ================= HELPER =================
-
     private fun setupTimeNow() {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         etJam.setText(sdf.format(Date()))

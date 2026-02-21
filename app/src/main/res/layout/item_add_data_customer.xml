@@ -10,14 +10,22 @@
         android:background="@drawable/bg_toolbar"
         android:padding="16dp">
 
-        <!-- NAMA SEBAGAI TITLE -->
+        <!-- Input Nama -->
         <TextView
             android:id="@+id/tvNama"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nama Pelanggan"
             android:textStyle="bold"
-            android:textSize="20sp"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/etNama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:padding="12dp"
+            android:text="Nama Pelanggan"
             android:layout_marginBottom="24dp" />
 
         <!-- LABEL PAKAIAN -->
@@ -28,6 +36,7 @@
             android:weightSum="4">
 
             <TextView
+                android:id="@+id/tvBaju"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Baju"
@@ -36,6 +45,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/tvRok"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Rok"
@@ -44,6 +54,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/tvJilbab"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Jilbab"
@@ -52,6 +63,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/tvKaos"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Kaos"
@@ -68,8 +80,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
-                android:id="@+id/tvBaju"
+            <EditText
+                android:id="@+id/etBaju"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
@@ -79,8 +91,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/tvRok"
+            <EditText
+                android:id="@+id/etRok"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
@@ -90,8 +102,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/tvJilbab"
+            <EditText
+                android:id="@+id/etJilbab"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
@@ -101,8 +113,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/tvKaos"
+            <EditText
+                android:id="@+id/etKaos"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
@@ -114,12 +126,13 @@
 
         <!-- KETERANGAN -->
         <TextView
+            android:id="@+id/tvKeterangan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Keterangan"
             android:textStyle="bold" />
 
-        <TextView
+        <EditText
             android:id="@+id/tvKeterangan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
