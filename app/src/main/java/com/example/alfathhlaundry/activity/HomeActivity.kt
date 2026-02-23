@@ -61,7 +61,8 @@ class HomeActivity : AppCompatActivity() {
 
         // ===== SEARCH =====
         btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
         }
 
         // ===== LOGOUT =====

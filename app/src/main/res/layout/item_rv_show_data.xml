@@ -113,7 +113,7 @@
             android:background="@drawable/bg_input"
             android:gravity="center"
             android:padding="10dp"
-            android:Text="0" />
+            android:text="1" />
     </LinearLayout>
 
     <!-- KETERANGAN -->
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_input"
         android:padding="12dp"
-        android:Text="Keterangan" />
+        android:text="Ket" />
 
 </LinearLayout>
 

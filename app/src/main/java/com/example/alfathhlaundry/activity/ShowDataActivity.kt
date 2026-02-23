@@ -41,7 +41,8 @@ class ShowDataActivity : AppCompatActivity() {
     private fun getData(){
         val dataGrup = intent.getSerializableExtra("DATA_GRUP") as? ShowDataResponse
         dataGrup?.let { grup ->
-            // Isi TextView yang bukan title
+
+            //TextView
             tvTitle.text = grup.title
             tvWaktu.text = grup.waktu
             tvJenis.text = grup.jenis_seragam
