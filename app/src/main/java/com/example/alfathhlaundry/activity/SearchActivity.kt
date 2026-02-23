@@ -27,7 +27,6 @@ class SearchActivity : AppCompatActivity() {
 
         initView()
         setupRecyclerView()
-        loadDummyData() // ganti dengan API / database kamu
         setupAction()
     }
 
@@ -71,38 +70,5 @@ class SearchActivity : AppCompatActivity() {
             .sortedByDescending { it.createdAt } // terbaru → terlama
 
         adapter.updateData(filtered)
-    }
-
-    // Contoh dummy data (hapus kalau pakai API)
-    private fun loadDummyData() {
-
-        listGrup.add(
-            Search(
-                1,
-                "Kamar 1",
-                listOf("Andi", "Budi", "Citra"),
-                System.currentTimeMillis()
-            )
-        )
-
-        listGrup.add(
-            Search(
-                2,
-                "Kamar 2",
-                listOf("Dewi", "Eko"),
-                System.currentTimeMillis() - 100000
-            )
-        )
-
-        listGrup.add(
-            Search(
-                3,
-                "Kamar 3",
-                listOf("Fajar", "Gilang"),
-                System.currentTimeMillis() - 200000
-            )
-        )
-
-        adapter.updateData(listGrup.sortedByDescending { it.createdAt })
     }
 }
