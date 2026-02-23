@@ -5,32 +5,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.alfathhlaundry.model.ModelData
+import com.example.alfathhlaundry.model.ShowData
 import com.example.alfathhlaundry.R
 
-class ShowDataAdapter (private val dataList: List<ModelData>) :
+class ShowDataAdapter (private val list: List<ShowData>) :
 RecyclerView.Adapter<ShowDataAdapter.ViewHolder>(){
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val tvNama: TextView = itemView.findViewById(R.id.tvNama)
-        val tvWaktu: TextView = itemView.findViewById(R.id.tvWaktu)
-        val tvJenis: TextView = itemView.findViewById(R.id.tvJenis)
-        val tvBerat: TextView = itemView.findViewById(R.id.tvBerat)
+        val tvBaju: TextView = itemView.findViewById(R.id.tvBaju)
+        val tvRok: TextView = itemView.findViewById(R.id.tvRok)
+        val tvJilbab: TextView = itemView.findViewById(R.id.tvJilbab)
+        val tvKaos: TextView = itemView.findViewById(R.id.tvKaos)
+        val tvKeterangan: TextView = itemView.findViewById(R.id.tvKeterangan)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_rv_show_data, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_rv_show_data, parent, false)
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = dataList[position]
-        holder.tvNama.text = item.nama
-        holder.tvWaktu.text = item.waktu
-        holder.tvJenis.text = item.jenisSeragam
-        holder.tvBerat.text = item.berat
+        val data = list[position]
+
+        holder.tvNama.text = data.nama
+        holder.tvBaju.text = data.baju.toString()
+        holder.tvRok.text = data.rok.toString()
+        holder.tvJilbab.text = data.jilbab.toString()
+        holder.tvKaos.text = data.kaos.toString()
+        holder.tvKeterangan.text = data.keterangan
     }
 }
