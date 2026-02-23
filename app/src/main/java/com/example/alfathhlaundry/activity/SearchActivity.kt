@@ -3,8 +3,10 @@ package com.example.alfathhlaundry.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
@@ -17,6 +19,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var etSearch: EditText
     private lateinit var btnSearch: ImageView
     private lateinit var btnBack: ImageView
+    private lateinit var tvEmpty: TextView
 
     private lateinit var adapter: SearchAdapter
     private var listGrup = mutableListOf<Search>()
@@ -35,6 +38,7 @@ class SearchActivity : AppCompatActivity() {
         etSearch = findViewById(R.id.etSearch)
         btnSearch = findViewById(R.id.btnSearch)
         btnBack = findViewById(R.id.btnBack)
+        tvEmpty = findViewById(R.id.tvEmpty)
     }
 
     private fun setupRecyclerView() {
@@ -66,9 +70,17 @@ class SearchActivity : AppCompatActivity() {
             grup.listNamaPelanggan.any {
                 it.contains(keyword, ignoreCase = true)
             }
-        }
-            .sortedByDescending { it.createdAt } // terbaru → terlama
+        }.sortedByDescending { it.createdAt }
 
         adapter.updateData(filtered)
+
+        // 🔥 Tambahan empty state
+        if (filtered.isEmpty()) {
+            tvEmpty.visibility = View.VISIBLE
+            rvSearch.visibility = View.GONE
+        } else {
+            tvEmpty.visibility = View.GONE
+            rvSearch.visibility = View.VISIBLE
+        }
     }
 }

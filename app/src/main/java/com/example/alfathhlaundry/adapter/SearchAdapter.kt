@@ -16,7 +16,7 @@ class SearchAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvJudul: TextView = itemView.findViewById(R.id.tvJudul)
         val tvNama: TextView = itemView.findViewById(R.id.tvNama)
-        val btnShow: ImageButton = itemView.findViewById(R.id.btnDelete)
+        val btnShow: ImageButton = itemView.findViewById(R.id.btnShow)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
