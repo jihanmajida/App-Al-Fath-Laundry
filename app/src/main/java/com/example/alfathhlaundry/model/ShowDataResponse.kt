@@ -7,5 +7,5 @@ data class ShowDataResponse(
     val waktu: String,
     val jenis_seragam: String,
     val berat: String,
-    val pelanggan: ArrayList<ShowData>
+    val pelanggan: List<ShowData>
 ) : Serializable

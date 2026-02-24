@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.adapter.ShowDataAdapter
-import com.example.alfathhlaundry.model.ShowData
-import com.example.alfathhlaundry.model.ShowDataResponse
+import com.example.alfathhlaundry.model.GrupWithCustomer
 
 class ShowDataActivity : AppCompatActivity() {
 
@@ -39,19 +38,28 @@ class ShowDataActivity : AppCompatActivity() {
     }
 
     private fun getData(){
-        val dataGrup = intent.getSerializableExtra("DATA_GRUP") as? ShowDataResponse
-        dataGrup?.let { grup ->
 
-            //TextView
-            tvTitle.text = grup.title
-            tvWaktu.text = grup.waktu
-            tvJenis.text = grup.jenis_seragam
-            tvBerat.text = grup.berat
+        val data =
+            intent.getSerializableExtra("DATA_GRUP") as? GrupWithCustomer
 
-            // Setup RecyclerView
-            rvPelanggan.layoutManager = LinearLayoutManager(this)
-            rvPelanggan.adapter = ShowDataAdapter(grup.pelanggan)
+        data?.let {
+
+            tvTitle.text = it.grup.kamar
+            tvWaktu.text = it.grup.jam
+            tvJenis.text = it.grup.seragam
+            tvBerat.text = "${it.grup.berat} Kg"
+
+            // DEBUG CEK JUMLAH
+            println("JUMLAH CUSTOMER = ${it.customers.size}")
+
+            rvPelanggan.layoutManager =
+                LinearLayoutManager(this)
+
+            rvPelanggan.adapter =
+                ShowDataAdapter(it.customers)
+
         }
+
     }
 
     private fun setupBack() {

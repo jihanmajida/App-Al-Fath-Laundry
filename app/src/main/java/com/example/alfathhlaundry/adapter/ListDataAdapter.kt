@@ -44,8 +44,12 @@ class ListDataAdapter (
         val item = listData[position]
 
         // Ambil dari grup
-        holder.tvJudul.text = item.grup.seragam
-        holder.tvNama.text = item.grup.kamar
+        holder.tvJudul.text = item.grup.kamar
+        holder.tvNama.text =
+            if(item.customers.isNotEmpty())
+                item.customers[0].nama
+            else
+                "-"
         holder.tvBerat.text = "${item.grup.berat} Kg"
 
         holder.cbStatus.isChecked = item.grup.status

@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.alfathhlaundry.model.ShowData
 import com.example.alfathhlaundry.R
+import com.example.alfathhlaundry.model.CustomerData
 
-class ShowDataAdapter (private val list: List<ShowData>) :
+class ShowDataAdapter(private val list: List<CustomerData>) :
 RecyclerView.Adapter<ShowDataAdapter.ViewHolder>(){
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val tvNama: TextView = itemView.findViewById(R.id.tvNama)

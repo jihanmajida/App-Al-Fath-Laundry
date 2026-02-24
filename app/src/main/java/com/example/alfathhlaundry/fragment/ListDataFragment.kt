@@ -69,15 +69,20 @@ class ListDataFragment : Fragment() {
             // 🔹 Klik seluruh item → Show detail
             onItemClick = { item ->
                 val intent = Intent(requireContext(), ShowDataActivity::class.java)
-                intent.putExtra("DATA_ITEM", item)
+                intent.putExtra("DATA_GRUP", item)
                 startActivity(intent)
             },
 
             // 🔹 Klik Edit
             onEditClick = { item ->
+
                 val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
-                intent.putExtra("DATA_ITEM", item)
+
+                intent.putExtra("MODE", "EDIT")
+                intent.putExtra("DATA_GRUP", item)
+
                 startActivity(intent)
+
             },
 
             // 🔹 Klik Delete
@@ -87,9 +92,12 @@ class ListDataFragment : Fragment() {
                     .setMessage("Apakah anda yakin ingin menghapus data?")
                     .setPositiveButton("Ya") { _, _ ->
 
-                        DataStorage.listGrup.remove(item)
-                        adapter.notifyDataSetChanged()
-
+                        val index = listData.indexOf(item)
+                        if (index != -1) {
+                            DataStorage.listGrup.remove(item)
+                            listData.removeAt(index)
+                            adapter.notifyItemRemoved(index)
+                        }
                     }
                     .setNegativeButton("Tidak") { dialog, _ ->
                         dialog.dismiss()

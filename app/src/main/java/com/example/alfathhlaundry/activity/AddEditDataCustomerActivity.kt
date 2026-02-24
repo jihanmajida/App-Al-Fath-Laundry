@@ -3,7 +3,6 @@ package com.example.alfathhlaundry.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.DataStorage.DataStorage
 import com.example.alfathhlaundry.adapter.FormAdapter
-import com.example.alfathhlaundry.model.FormData
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.model.GrupData
 import com.example.alfathhlaundry.model.GrupWithCustomer
@@ -25,10 +23,22 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     private lateinit var tvTitle: TextView
 
     private lateinit var adapter: FormAdapter
+
     private var jumlah = 1
+
+    private var mode: String? = null
+    private var dataLama: GrupWithCustomer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_data_customer)
+
+        // ambil mode
+        mode = intent.getStringExtra("MODE")
+        if (mode == "EDIT") {
+            dataLama =
+                intent.getSerializableExtra("DATA_GRUP") as GrupWithCustomer
+        }
 
         initView()
         setupRecyclerView()
@@ -44,8 +54,6 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupTitle() {
-        val mode = intent.getStringExtra("MODE")
-
         if (mode == "EDIT") {
             tvTitle.text = "Edit Data Pelanggan"
         } else {
@@ -55,35 +63,65 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         jumlah = intent.getIntExtra("JUMLAH", 1)
-
-        adapter = FormAdapter(jumlah)
-        rvForm.layoutManager = LinearLayoutManager(this)
-        rvForm.adapter = adapter
+        adapter =
+            FormAdapter(jumlah)
+        rvForm.layoutManager =
+            LinearLayoutManager(this)
+        rvForm.adapter =
+            adapter
     }
 
     private fun setupClick() {
-
-        btnBack.setOnClickListener { finish() }
-
+        btnBack.setOnClickListener {
+            finish()
+        }
         btnSimpan.setOnClickListener {
-
-            val listCustomer = adapter.getAllData()
-
-            if (listCustomer.any { it.nama.isBlank() }) {
-                Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
+            rvForm.clearFocus()
+            val listCustomer =
+                adapter.getAllData()
+            if (listCustomer.any {
+                    it.nama.isBlank()
+                }) {
+                Toast.makeText(
+                    this,
+                    "Nama tidak boleh kosong",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
+            val grup =
+                intent.getSerializableExtra("GRUP_OBJECT") as GrupData
+            val dataGabungan =
+                GrupWithCustomer(
+                    grup,
+                    listCustomer
+                )
 
-            val grup = intent.getSerializableExtra("GRUP_OBJECT") as GrupData
-            val dataGabungan = GrupWithCustomer(grup, listCustomer)
-
-            DataStorage.listGrup.add(dataGabungan)
-
-            Toast.makeText(this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
-
+            // LOGIC ADD ATAU EDIT
+            if (mode == "EDIT") {
+                val index =
+                    DataStorage.listGrup.indexOf(dataLama)
+                if (index != -1) {
+                    DataStorage.listGrup[index] =
+                        dataGabungan
+                }
+            } else {
+                DataStorage.listGrup.add(
+                    dataGabungan
+                )
+            }
+            Toast.makeText(
+                this,
+                "Data berhasil disimpan",
+                Toast.LENGTH_SHORT
+            ).show()
             finishAffinity()
-
-            startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(
+                Intent(
+                    this,
+                    HomeActivity::class.java
+                )
+            )
         }
     }
 }

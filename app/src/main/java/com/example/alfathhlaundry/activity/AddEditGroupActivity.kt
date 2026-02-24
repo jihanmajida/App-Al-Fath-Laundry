@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.model.GrupData
+import com.example.alfathhlaundry.model.GrupWithCustomer
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -30,6 +31,7 @@ class AddEditGroupActivity : AppCompatActivity() {
     private lateinit var tvTitle: TextView
     private lateinit var btnNext: Button
     private lateinit var btnBack: ImageButton
+    private var dataItem: GrupWithCustomer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +39,9 @@ class AddEditGroupActivity : AppCompatActivity() {
 
         initView()
         setupTitle()
-        setupClick()
         setupSpinner()
+        setupData()
+        setupClick()
         setupDateTime()
     }
 
@@ -64,6 +67,33 @@ class AddEditGroupActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupData(){
+        val mode = intent.getStringExtra("MODE")
+        if(mode == "EDIT"){
+            dataItem =
+                intent.getSerializableExtra("DATA_GRUP") as GrupWithCustomer
+            dataItem?.let {
+                etTanggal.setText(it.grup.tanggal)
+                etJam.setText(it.grup.jam)
+                etBerat.setText(it.grup.berat.toString())
+                etJumlah.setText(it.grup.jumlahOrang.toString())
+                setSpinnerValue(spSeragam, it.grup.seragam)
+                setSpinnerValue(spKamar, it.grup.kamar)
+
+            }
+
+        }
+    }
+
+    private fun setSpinnerValue(spinner: Spinner, value: String){
+        for(i in 0 until spinner.count){
+            if(spinner.getItemAtPosition(i).toString() == value){
+                spinner.setSelection(i)
+                break
+            }
+        }
+    }
+
     private fun setupClick() {
 
         btnBack.setOnClickListener {
@@ -84,8 +114,14 @@ class AddEditGroupActivity : AppCompatActivity() {
             )
 
             val intent = Intent(this, AddEditDataCustomerActivity::class.java)
-            intent.putExtra("JUMLAH", grup.jumlahOrang)
             intent.putExtra("GRUP_OBJECT", grup)
+            if (dataItem != null) {
+                intent.putExtra("MODE", "EDIT")
+                intent.putExtra("DATA_GRUP", dataItem)
+            } else {
+                intent.putExtra("MODE", "ADD")
+            }
+            intent.putExtra("JUMLAH", grup.jumlahOrang)
             startActivity(intent)
         }
     }

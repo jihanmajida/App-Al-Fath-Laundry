@@ -7,12 +7,13 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
-import com.example.alfathhlaundry.model.SearchData
+import com.example.alfathhlaundry.model.GrupWithCustomer
 
 class SearchAdapter(
-    private var listGrup: List<SearchData>,
-    private val onClick: (SearchData) -> Unit
+    private var listGrup: List<GrupWithCustomer>,
+    private val onClick: (GrupWithCustomer) -> Unit
 ) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvJudul: TextView = itemView.findViewById(R.id.tvJudul)
         val tvNama: TextView = itemView.findViewById(R.id.tvNama)
@@ -20,26 +21,43 @@ class SearchAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_rv_search_data, parent, false)
+
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int = listGrup.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val grup = listGrup[position]
 
-        holder.tvJudul.text = grup.namaKamar
-        holder.tvNama.text = grup.listNamaPelanggan.joinToString(", ")
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        val grupWithCustomer = listGrup[position]
+
+        holder.tvJudul.text = grupWithCustomer.grup.kamar
+
+
+        holder.tvNama.text =
+            grupWithCustomer.customers.joinToString(", ") {
+                it.nama
+            }
+
 
         holder.btnShow.setOnClickListener {
-            onClick(grup)
+
+            onClick(grupWithCustomer)
+
         }
     }
 
-    fun updateData(newList: List<SearchData>) {
+
+    fun updateData(newList: List<GrupWithCustomer>) {
+
         listGrup = newList
+
         notifyDataSetChanged()
+
     }
+
 }
