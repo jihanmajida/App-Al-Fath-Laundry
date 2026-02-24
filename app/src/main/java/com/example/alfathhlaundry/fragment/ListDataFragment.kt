@@ -13,6 +13,7 @@ import com.example.alfathhlaundry.model.ItemListData
 import com.example.alfathhlaundry.adapter.ListDataAdapter
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.activity.AddEditGroupActivity
+import com.example.alfathhlaundry.activity.ShowDataActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -23,14 +24,34 @@ class ListDataFragment : Fragment() {
 
     private lateinit var rvListData: RecyclerView
     private lateinit var adapter: ListDataAdapter
-    private val listData = mutableListOf<ItemListData>()
+    private var listData = mutableListOf<ItemListData>()
+
+    companion object{
+        private const val ARG_DATA = "ARG_DATA"
+
+        fun newInstance(data: ArrayList<ItemListData>): ListDataFragment {
+            val fragment = ListDataFragment()
+            val bundle = Bundle()
+            bundle.putSerializable(ARG_DATA, data)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            listData = (it.getSerializable(ARG_DATA) as? ArrayList<ItemListData>)
+                ?: arrayListOf()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
         return inflater.inflate(R.layout.fragment_list_data, container, false)
     }
 
@@ -42,15 +63,22 @@ class ListDataFragment : Fragment() {
 
         adapter = ListDataAdapter(
             listData,
-            onEditClick = { item ->
-                //aksi edit
-                val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
-                intent.putExtra("berat", item.berat)
-                intent.putExtra("judul", item.judul)
-                intent.putExtra("nama", item.nama)
-                intent.putExtra("status", item.status)
+
+            //Klik Sluruh item -> ShowDataActivity
+            onItemClick = { item ->
+                val intent = Intent(requireContext(), ShowDataActivity::class.java)
+                intent.putExtra("DATA_ITEM", item)
                 startActivity(intent)
             },
+
+            //Klik button edit
+            onEditClick = { item ->
+                val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
+                intent.putExtra("DATA_ITEM", item)
+                startActivity(intent)
+            },
+
+            //Klik Button delete
             onDeleteClick = { item ->
                 AlertDialog.Builder(requireContext())
                     .setTitle("Konfirmasi")
@@ -64,8 +92,9 @@ class ListDataFragment : Fragment() {
                     }
                     .show()
             },
-            onStatusChange = { item, isChecked ->
 
+            //Klik Button status
+            onStatusChange = { item, isChecked ->
                 AlertDialog.Builder(requireContext())
                     .setTitle("Konfirmasi")
                     .setMessage("Apakah anda yakin ingin mengubah status data?")
@@ -82,7 +111,5 @@ class ListDataFragment : Fragment() {
         )
 
         rvListData.adapter = adapter
-
-        adapter.notifyDataSetChanged()
     }
 }
