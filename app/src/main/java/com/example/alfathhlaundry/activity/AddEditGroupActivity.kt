@@ -1,6 +1,7 @@
 package com.example.alfathhlaundry.activity
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,8 +10,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import com.example.alfathhlaundry.R
+import com.example.alfathhlaundry.model.GrupData
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -20,113 +23,190 @@ class AddEditGroupActivity : AppCompatActivity() {
 
     private lateinit var etTanggal: EditText
     private lateinit var etJam: EditText
+    private lateinit var etBerat: EditText
     private lateinit var etJumlah: EditText
     private lateinit var spSeragam: Spinner
     private lateinit var spKamar: Spinner
+    private lateinit var tvTitle: TextView
+    private lateinit var btnNext: Button
+    private lateinit var btnBack: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_group)
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        val btnNext = findViewById<Button>(R.id.btnNext)
+        initView()
+        setupTitle()
+        setupClick()
+        setupSpinner()
+        setupDateTime()
+    }
 
+    private fun initView() {
         etTanggal = findViewById(R.id.etTanggal)
         etJam = findViewById(R.id.etJam)
+        etBerat = findViewById(R.id.etBerat)
         etJumlah = findViewById(R.id.etJumlah)
         spSeragam = findViewById(R.id.spSeragam)
         spKamar = findViewById(R.id.spKamar)
+        tvTitle = findViewById(R.id.tvTitle)
+        btnNext = findViewById(R.id.btnNext)
+        btnBack = findViewById(R.id.btnBack)
+    }
 
-        // BACK -> HOME
+    private fun setupTitle() {
+        val mode = intent.getStringExtra("MODE")
+
+        if (mode == "EDIT") {
+            tvTitle.text = "Edit Data Grup"
+        } else {
+            tvTitle.text = "Tambah Data Grup"
+        }
+    }
+
+    private fun setupClick() {
+
         btnBack.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
             finish()
         }
 
-        setupTimeNow()
-        setupDatePicker()
-        setupSpinner()
-
-        // NEXT -> Add Data Customer
         btnNext.setOnClickListener {
-            val jumlah = etJumlah.text.toString().toIntOrNull()
 
-            if (jumlah == null || jumlah <= 0) {
-                Toast.makeText(this, "Masukkan jumlah orang yang valid", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            if (!validateForm()) return@setOnClickListener
+
+            val grup = GrupData(
+                etTanggal.text.toString(),
+                etJam.text.toString(),
+                spSeragam.selectedItem.toString(),
+                spKamar.selectedItem.toString(),
+                etBerat.text.toString().toDouble(),
+                etJumlah.text.toString().toInt()
+            )
 
             val intent = Intent(this, AddEditDataCustomerActivity::class.java)
-            intent.putExtra("JUMLAH", jumlah)
+            intent.putExtra("JUMLAH", grup.jumlahOrang)
+            intent.putExtra("GRUP_OBJECT", grup)
             startActivity(intent)
-        }
-    }
-
-    // ================= HELPER =================
-    private fun setupTimeNow() {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        etJam.setText(sdf.format(Date()))
-        etJam.isEnabled = false
-    }
-
-    private fun setupDatePicker() {
-        etTanggal.isFocusable = false
-        etTanggal.setOnClickListener {
-
-            val cal = Calendar.getInstance()
-
-            DatePickerDialog(
-                this,
-                { _, y, m, d ->
-                    val date = String.format("%02d-%02d-%d", d, m + 1, y)
-                    etTanggal.setText(date)
-                },
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            ).show()
         }
     }
 
     private fun setupSpinner() {
 
-        val seragamList = listOf(
+        // Spinner Seragam
+        val listSeragam = listOf(
+            "Pilih Seragam",
             "OSIS",
-            "Batik",
-            "Pramuka",
             "Olahraga",
+            "Batik",
             "Kepanduan",
+            "Pramuka",
             "Lainnya"
         )
 
-        val kamarList = listOf(
-            "Kamar Alexandria 1", "Kamar Alexandria 2", "Kamar Alexandria 3", "Kamar Alexandria 4", "Kamar Alexandria 5",
-            "Kamar Alexandria 6", "Kamar Alexandria 7", "Kamar Alexandria 8", "Kamar Alexandria 9", "Kamar Alexandria 10",
-            "Kamar Alexandria 11", "Kamar Alexandria 12", "Kamar Alexandria 31", "Kamar Alexandria 14"
-        )
-
-        val seragamAdapter = ArrayAdapter(
+        val adapterSeragam = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            seragamList
+            listSeragam
         )
 
-        seragamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spSeragam.adapter = seragamAdapter
+        adapterSeragam.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spSeragam.adapter = adapterSeragam
 
-        val kamarAdapter = ArrayAdapter(
+        // Spinner Kamar
+        val listKamar = mutableListOf("Pilih Kamar")
+
+        for (i in 1..14) {
+            listKamar.add("Alexandria $i")
+        }
+
+        val adapterKamar = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            kamarList
+            listKamar
         )
-        kamarAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spKamar.adapter = kamarAdapter
+
+        adapterKamar.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spKamar.adapter = adapterKamar
     }
 
-    private fun toast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun setupDateTime() {
+
+        val calendar = Calendar.getInstance()
+
+        // Set otomatis saat buka
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        etTanggal.setText(dateFormat.format(calendar.time))
+        etJam.setText(timeFormat.format(calendar.time))
+
+        // Klik Tanggal
+        etTanggal.setOnClickListener {
+
+            val datePicker = DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
+
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(year, month, dayOfMonth)
+
+                    etTanggal.setText(
+                        dateFormat.format(selectedCalendar.time)
+                    )
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            datePicker.show()
+        }
+
+        // Klik Jam
+        etJam.setOnClickListener {
+
+            val timePicker = TimePickerDialog(
+                this,
+                { _, hourOfDay, minute ->
+
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    selectedCalendar.set(Calendar.MINUTE, minute)
+
+                    etJam.setText(
+                        timeFormat.format(selectedCalendar.time)
+                    )
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            )
+
+            timePicker.show()
+        }
     }
 
+    private fun validateForm(): Boolean {
+
+        if (etTanggal.text.isEmpty() ||
+            etJam.text.isEmpty() ||
+            etBerat.text.isEmpty() ||
+            etJumlah.text.isEmpty()
+        ) {
+            Toast.makeText(this, "Semua field wajib diisi", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (spSeragam.selectedItemPosition == 0) {
+            Toast.makeText(this, "Pilih jenis seragam", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (spKamar.selectedItemPosition == 0) {
+            Toast.makeText(this, "Pilih kamar", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
 }

@@ -7,11 +7,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
-import com.example.alfathhlaundry.model.Search
+import com.example.alfathhlaundry.model.SearchData
 
 class SearchAdapter(
-    private var listGrup: List<Search>,
-    private val onClick: (Search) -> Unit
+    private var listGrup: List<SearchData>,
+    private val onClick: (SearchData) -> Unit
 ) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvJudul: TextView = itemView.findViewById(R.id.tvJudul)
@@ -38,7 +38,7 @@ class SearchAdapter(
         }
     }
 
-    fun updateData(newList: List<Search>) {
+    fun updateData(newList: List<SearchData>) {
         listGrup = newList
         notifyDataSetChanged()
     }

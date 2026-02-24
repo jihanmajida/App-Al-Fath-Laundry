@@ -13,13 +13,14 @@ import com.example.alfathhlaundry.model.ItemListData
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.activity.AddEditGroupActivity
 import com.example.alfathhlaundry.activity.ShowDataActivity
+import com.example.alfathhlaundry.model.GrupWithCustomer
 
 class ListDataAdapter (
-    private val listData: MutableList<ItemListData>,
-    private val onItemClick: (ItemListData) -> Unit,
-    private val onEditClick: (ItemListData) -> Unit,
-    private val onDeleteClick: (ItemListData) -> Unit,
-    private val onStatusChange: (ItemListData, Boolean) -> Unit
+    private val listData: MutableList<GrupWithCustomer>,
+    private val onItemClick: (GrupWithCustomer) -> Unit,
+    private val onEditClick: (GrupWithCustomer) -> Unit,
+    private val onDeleteClick: (GrupWithCustomer) -> Unit,
+    private val onStatusChange: (GrupWithCustomer, Boolean) -> Unit
 ) : RecyclerView.Adapter<ListDataAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvJudul: TextView = view.findViewById(R.id.tvJudul)
@@ -42,10 +43,12 @@ class ListDataAdapter (
 
         val item = listData[position]
 
-        holder.tvJudul.text = item.judul
-        holder.tvNama.text = item.nama
-        holder.tvBerat.text = item.berat
-        holder.cbStatus.isChecked = item.status
+        // Ambil dari grup
+        holder.tvJudul.text = item.grup.seragam
+        holder.tvNama.text = item.grup.kamar
+        holder.tvBerat.text = "${item.grup.berat} Kg"
+
+        holder.cbStatus.isChecked = item.grup.status
 
         // Klik seluruh item
         holder.itemView.setOnClickListener {

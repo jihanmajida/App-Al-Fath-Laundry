@@ -5,60 +5,62 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.model.FormData
 import com.example.alfathhlaundry.R
+import com.example.alfathhlaundry.model.CustomerData
 
-class FormAdapter(val formLength: Int) : RecyclerView.Adapter<FormAdapter.FormViewHolder>() {
+class FormAdapter(private val jumlah: Int) :
+    RecyclerView.Adapter<FormAdapter.ViewHolder>() {
 
-    var etNama: EditText? = null
-    var etBaju: EditText? = null
-    var etRok: EditText? = null
-    var etJilbab: EditText? = null
-    var etKaos: EditText? = null
-    var etKeterangan: EditText? = null
+    private val listData = MutableList(jumlah) {
+        CustomerData("", 0, 0, 0, 0, "")
+    }
 
-    inner class FormViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        init {
-            etNama = view.findViewById(R.id.etNama)
-            etBaju = view.findViewById(R.id.etBaju)
-            etRok = view.findViewById(R.id.etRok)
-            etJilbab = view.findViewById(R.id.etJilbab)
-            etKaos = view.findViewById(R.id.etKaos)
-            etKeterangan = view.findViewById(R.id.etKeterangan)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val etNama: EditText = itemView.findViewById(R.id.etNama)
+        val etBaju: EditText = itemView.findViewById(R.id.etBaju)
+        val etRok: EditText = itemView.findViewById(R.id.etRok)
+        val etJilbab: EditText = itemView.findViewById(R.id.etJilbab)
+        val etKaos: EditText = itemView.findViewById(R.id.etKaos)
+        val etKeterangan: EditText = itemView.findViewById(R.id.etKeterangan)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_add_data_customer, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun getItemCount(): Int = jumlah
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        holder.etNama.addTextChangedListener {
+            listData[position].nama = it.toString()
+        }
+
+        holder.etBaju.addTextChangedListener {
+            listData[position].baju = it.toString().toIntOrNull() ?: 0
+        }
+
+        holder.etRok.addTextChangedListener {
+            listData[position].rok = it.toString().toIntOrNull() ?: 0
+        }
+
+        holder.etJilbab.addTextChangedListener {
+            listData[position].jilbab = it.toString().toIntOrNull() ?: 0
+        }
+
+        holder.etKaos.addTextChangedListener {
+            listData[position].kaos = it.toString().toIntOrNull() ?: 0
+        }
+
+        holder.etKeterangan.addTextChangedListener {
+            listData[position].keterangan = it.toString()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FormViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_add_data_customer, parent, false)
-        return FormViewHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        Log.i("JUMLAH_ADAPTER",formLength.toString())
-        return formLength
-    }
-
-    override fun onBindViewHolder(holder: FormViewHolder, position: Int) {}
-
-    fun getData(): FormData {
-        return FormData(
-            nama = etNama?.text.toString(),
-            baju = etBaju?.text.toString().toIntOrNull() ?: 0,
-            rok = etRok?.text.toString().toIntOrNull() ?: 0,
-            jilbab = etJilbab?.text.toString().toIntOrNull() ?: 0,
-            kaos = etKaos?.text.toString().toIntOrNull() ?: 0,
-            keterangan = etKeterangan?.text.toString()
-        )
-    }
-
-    fun setData(data: FormData) {
-        etNama?.setText(data.nama)
-        etBaju?.setText(data.baju.toString())
-        etRok?.setText(data.rok.toString())
-        etJilbab?.setText(data.jilbab.toString())
-        etKaos?.setText(data.kaos.toString())
-        etKeterangan?.setText(data.keterangan)
-    }
+    fun getAllData(): List<CustomerData> = listData
 }

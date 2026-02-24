@@ -1,16 +1,21 @@
 package com.example.alfathhlaundry.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.DataStorage.DataStorage
 import com.example.alfathhlaundry.adapter.FormAdapter
 import com.example.alfathhlaundry.model.FormData
 import com.example.alfathhlaundry.R
+import com.example.alfathhlaundry.model.GrupData
+import com.example.alfathhlaundry.model.GrupWithCustomer
 
 class AddEditDataCustomerActivity : AppCompatActivity() {
 
@@ -20,52 +25,40 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     private lateinit var tvTitle: TextView
 
     private lateinit var adapter: FormAdapter
-    private var mode = "ADD"
+    private var jumlah = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_data_customer)
 
         initView()
         setupRecyclerView()
-        setupMode()
+        setupTitle()
         setupClick()
     }
 
     private fun initView() {
         rvForm = findViewById(R.id.rvForm)
         btnSimpan = findViewById(R.id.btnSimpan)
-        btnBack = findViewById(R.id.btnBack)
         tvTitle = findViewById(R.id.tvTitle)
+        btnBack = findViewById(R.id.btnBack)
+    }
+
+    private fun setupTitle() {
+        val mode = intent.getStringExtra("MODE")
+
+        if (mode == "EDIT") {
+            tvTitle.text = "Edit Data Pelanggan"
+        } else {
+            tvTitle.text = "Tambah Data Pelanggan"
+        }
     }
 
     private fun setupRecyclerView() {
-        val jumlahForm = intent.getIntExtra("JUMLAH", 0)
-        Log.i("Jumlah", jumlahForm.toString())
-        adapter = FormAdapter(formLength = jumlahForm)
+        jumlah = intent.getIntExtra("JUMLAH", 1)
+
+        adapter = FormAdapter(jumlah)
         rvForm.layoutManager = LinearLayoutManager(this)
         rvForm.adapter = adapter
-    }
-
-    private fun setupMode() {
-        mode = intent.getStringExtra("MODE") ?: "ADD"
-
-        if (mode == "EDIT") {
-            tvTitle.text = "Edit Data Group"
-
-//            val data = FormData(
-//                nama = intent.getStringExtra("NAMA") ?: "",
-//                baju = intent.getIntExtra("BAJU", 0),
-//                rok = intent.getIntExtra("ROK", 0),
-//                jilbab = intent.getIntExtra("JILBAB", 0),
-//                kaos = intent.getIntExtra("KAOS", 0),
-//                keterangan = intent.getStringExtra("KETERANGAN") ?: ""
-//            )
-//            rvForm.post {
-//                adapter.setData(data)
-//            }
-        } else {
-            tvTitle.text = "Tambah Data Group"
-        }
     }
 
     private fun setupClick() {
@@ -74,18 +67,23 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
 
         btnSimpan.setOnClickListener {
 
-            val data = adapter.getData()
+            val listCustomer = adapter.getAllData()
 
-            if (data.nama.isEmpty()) {
+            if (listCustomer.any { it.nama.isBlank() }) {
+                Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (mode == "EDIT") {
-                // update
-            } else {
-                // insert
-            }
-            finish()
+            val grup = intent.getSerializableExtra("GRUP_OBJECT") as GrupData
+            val dataGabungan = GrupWithCustomer(grup, listCustomer)
+
+            DataStorage.listGrup.add(dataGabungan)
+
+            Toast.makeText(this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
+
+            finishAffinity()
+
+            startActivity(Intent(this, HomeActivity::class.java))
         }
     }
 }

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.adapter.SearchAdapter
-import com.example.alfathhlaundry.model.Search
+import com.example.alfathhlaundry.model.SearchData
 
 class SearchActivity : AppCompatActivity() {
 
@@ -22,7 +22,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var tvEmpty: TextView
 
     private lateinit var adapter: SearchAdapter
-    private var listGrup = mutableListOf<Search>()
+    private var listGrup = mutableListOf<SearchData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

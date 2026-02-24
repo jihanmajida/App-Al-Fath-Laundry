@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.alfathhlaundry.DataStorage.DataStorage
 import com.example.alfathhlaundry.model.ItemListData
 import com.example.alfathhlaundry.adapter.ListDataAdapter
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.activity.AddEditGroupActivity
 import com.example.alfathhlaundry.activity.ShowDataActivity
+import com.example.alfathhlaundry.model.GrupWithCustomer
 
 /**
  * A simple [Fragment] subclass.
@@ -24,7 +26,9 @@ class ListDataFragment : Fragment() {
 
     private lateinit var rvListData: RecyclerView
     private lateinit var adapter: ListDataAdapter
-    private var listData = mutableListOf<ItemListData>()
+
+    // langsung pakai DataStorage
+    private var listData: MutableList<GrupWithCustomer> = DataStorage.listGrup
 
     companion object{
         private const val ARG_DATA = "ARG_DATA"
@@ -38,54 +42,54 @@ class ListDataFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            listData = (it.getSerializable(ARG_DATA) as? ArrayList<ItemListData>)
-                ?: arrayListOf()
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+
         return inflater.inflate(R.layout.fragment_list_data, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Temukan RecyclerView
         rvListData = view.findViewById(R.id.rvListData)
         rvListData.layoutManager = LinearLayoutManager(requireContext())
 
+        // Siapkan data list
+        listData = mutableListOf()
+        listData.addAll(DataStorage.listGrup)
+
         adapter = ListDataAdapter(
+
             listData,
 
-            //Klik Sluruh item -> ShowDataActivity
+            // 🔹 Klik seluruh item → Show detail
             onItemClick = { item ->
                 val intent = Intent(requireContext(), ShowDataActivity::class.java)
                 intent.putExtra("DATA_ITEM", item)
                 startActivity(intent)
             },
 
-            //Klik button edit
+            // 🔹 Klik Edit
             onEditClick = { item ->
                 val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
                 intent.putExtra("DATA_ITEM", item)
                 startActivity(intent)
             },
 
-            //Klik Button delete
+            // 🔹 Klik Delete
             onDeleteClick = { item ->
                 AlertDialog.Builder(requireContext())
                     .setTitle("Konfirmasi")
                     .setMessage("Apakah anda yakin ingin menghapus data?")
                     .setPositiveButton("Ya") { _, _ ->
-                        listData.remove(item)
+
+                        DataStorage.listGrup.remove(item)
                         adapter.notifyDataSetChanged()
+
                     }
                     .setNegativeButton("Tidak") { dialog, _ ->
                         dialog.dismiss()
@@ -93,13 +97,13 @@ class ListDataFragment : Fragment() {
                     .show()
             },
 
-            //Klik Button status
+            // 🔹 Klik Status
             onStatusChange = { item, isChecked ->
                 AlertDialog.Builder(requireContext())
                     .setTitle("Konfirmasi")
                     .setMessage("Apakah anda yakin ingin mengubah status data?")
                     .setPositiveButton("Ya") { _, _ ->
-                        item.status = isChecked
+                        item.grup.status = isChecked
                         adapter.notifyDataSetChanged()
                     }
                     .setNegativeButton("Tidak") { dialog, _ ->
@@ -111,5 +115,17 @@ class ListDataFragment : Fragment() {
         )
 
         rvListData.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (::adapter.isInitialized) {
+
+            listData.clear()
+            listData.addAll(DataStorage.listGrup)
+
+            adapter.notifyDataSetChanged()
+        }
     }
 }

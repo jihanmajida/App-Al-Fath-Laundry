@@ -1,6 +1,7 @@
 package com.example.alfathhlaundry.model
 
-data class Search(
+
+data class SearchData(
     val idGrup: Int,
     val namaKamar: String,
     val listNamaPelanggan: List<String>,

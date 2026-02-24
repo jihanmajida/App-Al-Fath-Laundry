@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.alfathhlaundry.DataStorage.DataStorage
 import com.example.alfathhlaundry.fragment.ListDataFragment
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.fragment.EmptyFragment
@@ -58,7 +59,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         fabTambah.setOnClickListener {
-            startActivity(Intent(this, AddEditGroupActivity::class.java))
+            val intent = Intent(this, AddEditGroupActivity::class.java)
+            intent.putExtra("MODE", "ADD")
+            startActivity(intent)
         }
     }
 
@@ -80,13 +83,15 @@ class HomeActivity : AppCompatActivity() {
         tvTanggal.text = formatTanggal.format(currentDate.time)
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadFragmentByDate()
+    }
+
     private fun loadFragmentByDate() {
 
-        val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .format(currentDate.time)
-
-        // TODO: ganti dengan API / database asli
-        val data = dummyData(selectedDate)
+        // Ambil semua grup dari DataStorage
+        val data = DataStorage.listGrup
 
         if (data.isEmpty()) {
             supportFragmentManager.beginTransaction()
@@ -94,7 +99,7 @@ class HomeActivity : AppCompatActivity() {
                 .commit()
         } else {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, ListDataFragment.newInstance(data))
+                .replace(R.id.fragmentContainer, ListDataFragment())
                 .commit()
         }
     }
@@ -109,32 +114,5 @@ class HomeActivity : AppCompatActivity() {
             }
             .setNegativeButton("Tidak", null)
             .show()
-    }
-
-    // Dummy data sementara
-    private fun dummyData(date: String): ArrayList<ItemListData> {
-
-        val list = arrayListOf<ItemListData>()
-
-        if (date.endsWith("01")) {
-            list.add(
-                ItemListData(
-                    berat = "5.0",
-                    judul = "Kamar 1",
-                    nama = "Nama1, Nama2",
-                    status = false
-                )
-            )
-
-            list.add(
-                ItemListData(
-                    berat = "3.5",
-                    judul = "Kamar 2",
-                    nama = "Nama3",
-                    status = true
-                )
-            )
-        }
-        return list
     }
 }
