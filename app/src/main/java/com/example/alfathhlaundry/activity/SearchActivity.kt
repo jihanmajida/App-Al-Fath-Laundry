@@ -70,6 +70,8 @@ class SearchActivity : AppCompatActivity() {
                 it.nama.contains(keyword, ignoreCase = true)
             }
         }
+            .reversed()
+
         adapter.updateData(filtered)
 
         if (filtered.isEmpty()) {

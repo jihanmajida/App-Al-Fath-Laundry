@@ -60,15 +60,27 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
             tvTitle.text = "Tambah Data Pelanggan"
         }
     }
-
     private fun setupRecyclerView() {
+        val mode = intent.getStringExtra("MODE")
         jumlah = intent.getIntExtra("JUMLAH", 1)
-        adapter =
-            FormAdapter(jumlah)
+
+        if(mode == "EDIT"){
+            dataLama =
+                intent.getSerializableExtra("DATA_GRUP")
+                        as GrupWithCustomer
+            adapter =
+                FormAdapter(
+                    jumlah,
+                    dataLama!!.customers
+                )
+        } else{
+            adapter =
+                FormAdapter(jumlah)
+        }
+
         rvForm.layoutManager =
             LinearLayoutManager(this)
-        rvForm.adapter =
-            adapter
+        rvForm.adapter = adapter
     }
 
     private fun setupClick() {
