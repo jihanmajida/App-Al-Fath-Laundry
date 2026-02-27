@@ -79,11 +79,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .format(Date())
-
-        viewModel.loadDataByDate(today)
+        updateDateAndLoad()
     }
 
     // INIT VIEW
@@ -100,14 +96,16 @@ class HomeActivity : AppCompatActivity() {
     // OBSERVE DATA FROM VIEWMODEL
     private fun observeData() {
         viewModel.grupData.observe(this) { listGrup ->
-            val fragment =
-                if (listGrup.isEmpty())
-                    EmptyFragment()
-                else
-                    ListDataFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .commit()
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+
+            val newFragment = if (listGrup.isEmpty()) EmptyFragment() else ListDataFragment()
+
+            // Hanya ganti fragment jika tipe fragment berbeda dari yang sekarang
+            if (currentFragment == null || currentFragment::class != newFragment::class) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, newFragment)
+                    .commit()
+            }
         }
     }
 

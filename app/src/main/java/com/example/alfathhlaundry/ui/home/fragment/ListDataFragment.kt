@@ -3,6 +3,7 @@ package com.example.alfathhlaundry.ui.home.fragment
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +20,7 @@ class ListDataFragment : Fragment() {
     private lateinit var rvListData: RecyclerView
     private lateinit var adapter: ListDataAdapter
 
+    // Menggunakan activityViewModels agar berbagi data yang sama dengan HomeActivity
     private val viewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -40,23 +42,20 @@ class ListDataFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-
         adapter = ListDataAdapter(
             emptyList(),
-
             onItemClick = { item ->
                 val intent = Intent(requireContext(), ShowDataActivity::class.java)
                 intent.putExtra("ID_GRUP", item.id_grup)
                 startActivity(intent)
             },
-
             onEditClick = { item ->
+                // Pastikan key "EXTRA_DATA" atau "DATA_GRUP" konsisten dengan AddEditGroupActivity
                 val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
                 intent.putExtra("MODE", "EDIT")
-                intent.putExtra("ID_GRUP", item.id_grup)
+                intent.putExtra("EXTRA_DATA", item)
                 startActivity(intent)
             },
-
             onDeleteClick = { item ->
                 AlertDialog.Builder(requireContext())
                     .setTitle("Konfirmasi")
@@ -67,30 +66,34 @@ class ListDataFragment : Fragment() {
                     .setNegativeButton("Tidak", null)
                     .show()
             },
-
             onStatusChange = { item, isChecked ->
+                // Jika user mencentang/uncentang, konfirmasi dulu
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Konfirmasi")
-                    .setMessage("Apakah Anda yakin ingin mengubah status data?")
+                    .setTitle("Konfirmasi Status")
+                    .setMessage("Ubah status menjadi ${if (isChecked) "Selesai" else "Belum Selesai"}?")
                     .setPositiveButton("Ya") { _, _ ->
                         viewModel.updateStatus(
                             item.id_grup,
                             if (isChecked) "1" else "0"
                         )
                     }
-                    .setNegativeButton("Tidak") { dialog, _ ->
+                    .setNegativeButton("Batal") { dialog, _ ->
                         dialog.dismiss()
-                        viewModel.reload() // rollback checkbox
+                        // Rollback tampilan checkbox ke posisi semula
+                        adapter.notifyDataSetChanged()
                     }
+                    .setCancelable(false) // Mencegah klik di luar dialog
                     .show()
             }
         )
-
         rvListData.adapter = adapter
     }
 
     private fun observeData() {
+        // Menggunakan viewLifecycleOwner sangat penting agar observer tidak tumpang tindih
+        // saat fragment diganti (replace) di HomeActivity
         viewModel.grupData.observe(viewLifecycleOwner) { data ->
+            Log.d("ListDataFragment", "Menerima data baru: ${data.size} item")
             adapter.updateData(data)
         }
     }

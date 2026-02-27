@@ -42,10 +42,9 @@ class FormAdapter(
         val pelanggan = pelangganList[position]
         val detail = detailList.getOrNull(position)
 
-        // Penting: Hapus listener lama sebelum mengisi text agar tidak terjadi error data tertukar
-        // Kita gunakan flag atau hapus listener jika perlu, namun cara termudah adalah re-assign data:
-
-        holder.etNama.setText(pelanggan.nama_pelanggan)
+        holder.etNama.addTextChangedListener {
+            pelangganList[position].nama_pelanggan = it.toString() // Pastikan baris ini ada!
+        }
         holder.etBaju.setText(detail?.baju?.toString() ?: "0")
         holder.etRok.setText(detail?.rok?.toString() ?: "0")
         holder.etJilbab.setText(detail?.jilbab?.toString() ?: "0")

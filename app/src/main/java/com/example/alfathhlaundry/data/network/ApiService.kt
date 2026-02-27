@@ -38,10 +38,10 @@ interface ApiService {
     ): Response<ApiResponse>
 
     // Get grup by tanggal
-    @GET("grup")
+    @GET("grup") // atau endpoint grup kamu
     suspend fun getGrup(
-        @Query("tanggal") tanggal: String
-    ): Response<GrupListResponse>
+        @Query("tanggal") tanggal: String // ✅ Ini akan menghasilkan: grup?tanggal=2026-02-26
+    ): List<GrupWithCustomer>
 
     // Get detail grup by id (tampilkan show data)
     @GET("grup/{id}")

@@ -11,12 +11,7 @@ class GrupRepository(private val api: ApiService) {
 
     // Load grup berdasarkan tanggal
     suspend fun getTodayData(tanggal: String): List<GrupWithCustomer> {
-        val response: Response<GrupListResponse> = api.getGrup(tanggal)
-        if (!response.isSuccessful) {
-            throw Exception("Failed to load data: ${response.code()} ${response.message()}")
-        }
-        val body = response.body() ?: throw Exception("Response body null")
-        return body.result
+        return api.getGrup(tanggal)
     }
 
     // Delete grup

@@ -55,7 +55,7 @@ class ListDataAdapter(
     }
 
     fun updateData(newData: List<GrupWithCustomer>) {
-        listData = newData
-        notifyDataSetChanged()
+        this.listData = newData // Pastikan ini listData yang dipakai di getItemCount
+        notifyDataSetChanged() // Memaksa RecyclerView menggambar ulang
     }
 }

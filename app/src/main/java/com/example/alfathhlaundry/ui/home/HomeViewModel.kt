@@ -16,14 +16,16 @@ class HomeViewModel(
     private var selectedDate: String? = null
 
     // Load data berdasarkan tanggal
+    // Di dalam HomeViewModel.kt
     fun loadDataByDate(tanggal: String) {
         selectedDate = tanggal
         viewModelScope.launch {
             try {
                 val result = repo.getTodayData(tanggal)
+                // CEK DI LOGCAT: Apakah hasil 'result' ini berubah-ubah sesuai tanggal?
+                android.util.Log.d("API_RESULT", "Tanggal: $tanggal, Jumlah Data: ${result.size}")
                 _grupData.postValue(result)
             } catch (e: Exception) {
-                Log.e("HomeViewModel", "Load data error", e)
                 _grupData.postValue(emptyList())
             }
         }
