@@ -85,26 +85,50 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
+        // Gunakan safe call untuk menghindari crash jika data null
         val currentGrup = if (mode == "EDIT") dataGrup else grupSementara
-        if (currentGrup == null) return
+        if (currentGrup == null) {
+            Toast.makeText(this, "Data Grup tidak ditemukan", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         val listPelanggan = ArrayList<Pelanggan>()
         val listDetail = ArrayList<DetailLaundry>()
 
         if (mode == "EDIT" && dataGrup != null) {
+            // Gunakan list yang sudah ada dari database
             listPelanggan.addAll(dataGrup!!.pelanggan)
             listDetail.addAll(dataGrup!!.detail_laundry)
-        } else {
+         } else {
             repeat(jumlah) {
-                listPelanggan.add(Pelanggan(0, ""))
-                listDetail.add(DetailLaundry(null, 0, 0, 0, 0, 0, 0, ""))
-            }
-        }
+                // Menambah Pelanggan baru dengan nama kosong
+                listPelanggan.add(Pelanggan(nama_pelanggan = ""))
 
+                // Menambah DetailLaundry baru dengan Named Arguments agar aman dari error urutan
+                listDetail.add(DetailLaundry(
+                    id = null,
+                    id_grup = 0,
+                    id_pelanggan = 0,
+                    baju = 0,
+                    rok = 0,
+                    jilbab = 0,
+                    kaos = 0,
+                    keterangan = "" // Pastikan ini String, jika di model String? maka "" tetap aman
+                ))
+        }
+    }
+
+        // Buat objek GrupSementara untuk dikirim ke Adapter agar seragam
         val tmpGrup = if (mode == "EDIT" && dataGrup != null) {
             GrupSementara(
-                dataGrup!!.tanggal, dataGrup!!.jam, dataGrup!!.jenis_pakaian,
-                dataGrup!!.kamar, dataGrup!!.berat.toString().toDoubleOrNull() ?: 0.0, dataGrup!!.jumlah_orang
+                dataGrup!!.tanggal,
+                dataGrup!!.jam,
+                dataGrup!!.jenis_pakaian,
+                dataGrup!!.kamar,
+                // Pastikan berat dikonversi dengan aman ke Double
+                dataGrup!!.berat.toString().toDoubleOrNull() ?: 0.0,
+                dataGrup!!.jumlah_orang
             )
         } else {
             grupSementara!!

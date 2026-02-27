@@ -62,7 +62,6 @@ interface ApiService {
         @Query("tanggal") tanggal: String?
     ): Response<List<GrupWithCustomer>>
 
-    // Update grup
     @PUT("grup/{id}")
     suspend fun updateGrup(
         @Path("id") id: Int,

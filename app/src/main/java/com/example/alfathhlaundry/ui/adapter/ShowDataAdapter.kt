@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
-import com.example.alfathhlaundry.data.model.user.CustomerData
 import com.example.alfathhlaundry.data.model.user.Pelanggan
 
 class ShowDataAdapter(
@@ -19,8 +18,13 @@ class ShowDataAdapter(
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvJudul: TextView = view.findViewById(R.id.tvJudul)
+        // ID ini harus sesuai dengan item_rv_show_data.xml
         val tvNama: TextView = view.findViewById(R.id.tvNama)
+        val tvBaju: TextView = view.findViewById(R.id.tvBaju)
+        val tvRok: TextView = view.findViewById(R.id.tvRok)
+        val tvJilbab: TextView = view.findViewById(R.id.tvJilbab)
+        val tvKaos: TextView = view.findViewById(R.id.tvKaos)
+        val tvKeterangan: TextView = view.findViewById(R.id.tvKeterangan)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,7 +37,13 @@ class ShowDataAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        holder.tvJudul.text = "Pelanggan ${position + 1}"
-        holder.tvNama.text = item.nama_pelanggan // Pastikan CustomerData punya @SerializedName("nama_pelanggan")
+
+        holder.tvNama.text = item.nama_pelanggan
+        holder.tvBaju.text = (item.baju ?: 0).toString()
+        holder.tvRok.text = (item.rok ?: 0).toString()
+        holder.tvJilbab.text = (item.jilbab ?: 0).toString()
+        holder.tvKaos.text = (item.kaos ?: 0).toString()
+
+        holder.tvKeterangan.text = if (item.keterangan.isNullOrEmpty()) "-" else item.keterangan
     }
 }

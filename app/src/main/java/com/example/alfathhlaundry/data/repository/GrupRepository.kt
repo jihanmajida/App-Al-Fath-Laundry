@@ -19,13 +19,15 @@ class GrupRepository(private val api: ApiService) {
     // Search grup: SEKARANG KONSISTEN MENGGUNAKAN List<GrupWithCustomer>
     suspend fun searchGrup(nama: String?, tanggal: String?): List<GrupWithCustomer> {
         try {
-            val response = api.searchGrup(nama, tanggal)
+            // Gunakan ?: "" untuk mengatasi Type Mismatch Required: String, Found: String?
+            val response = api.searchGrup(nama ?: "", tanggal)
 
             if (response.isSuccessful) {
-                // Sekarang tipe data response.body() (List) akan cocok dengan return type fungsi ini
+                // Pastikan body tidak null, jika null kembalikan list kosong
                 return response.body() ?: emptyList()
             } else {
-                Log.e("SEARCH_ERROR", "URL: ${response.raw().request.url}")
+                val errorBody = response.errorBody()?.string()
+                Log.e("SEARCH_ERROR", "Response Error: $errorBody")
                 throw Exception("Failed to search: ${response.code()}")
             }
         } catch (e: Exception) {
