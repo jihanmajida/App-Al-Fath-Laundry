@@ -13,18 +13,34 @@ class GrupRepository(private val api: ApiService) {
     // Load grup berdasarkan tanggal
     suspend fun getTodayData(tanggal: String): List<GrupWithCustomer> {
         val response = api.getGrup(tanggal)
-        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+        return if (response.isSuccessful) {
+            val rawData = response.body() ?: emptyList()
+            // Memastikan list pelanggan & detail tidak null sebelum dikirim ke UI
+            rawData.map {
+                it.copy(
+                    pelanggan = it.pelanggan ?: emptyList(),
+                    detail_laundry = it.detail_laundry ?: emptyList()
+                )
+            }
+        } else {
+            emptyList()
+        }
     }
 
     // Search grup: SEKARANG KONSISTEN MENGGUNAKAN List<GrupWithCustomer>
     suspend fun searchGrup(nama: String?, tanggal: String?): List<GrupWithCustomer> {
         try {
-            // Gunakan ?: "" untuk mengatasi Type Mismatch Required: String, Found: String?
             val response = api.searchGrup(nama ?: "", tanggal)
 
             if (response.isSuccessful) {
-                // Pastikan body tidak null, jika null kembalikan list kosong
-                return response.body() ?: emptyList()
+                val rawData = response.body() ?: emptyList()
+                // Memastikan list pelanggan & detail tidak null
+                return rawData.map {
+                    it.copy(
+                        pelanggan = it.pelanggan ?: emptyList(),
+                        detail_laundry = it.detail_laundry ?: emptyList()
+                    )
+                }
             } else {
                 val errorBody = response.errorBody()?.string()
                 Log.e("SEARCH_ERROR", "Response Error: $errorBody")

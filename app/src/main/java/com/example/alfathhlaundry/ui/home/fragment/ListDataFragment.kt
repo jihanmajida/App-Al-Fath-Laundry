@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.ui.adapter.ListDataAdapter
+import com.example.alfathhlaundry.ui.customer.AddEditDataCustomerActivity
 import com.example.alfathhlaundry.ui.grup.AddEditGroupActivity
 import com.example.alfathhlaundry.ui.home.HomeViewModel
 import com.example.alfathhlaundry.ui.showdata.ShowDataActivity
@@ -51,9 +52,11 @@ class ListDataFragment : Fragment() {
             },
             onEditClick = { item ->
                 // Pastikan key "EXTRA_DATA" atau "DATA_GRUP" konsisten dengan AddEditGroupActivity
-                val intent = Intent(requireContext(), AddEditGroupActivity::class.java)
-                intent.putExtra("MODE", "EDIT")
-                intent.putExtra("EXTRA_DATA", item)
+                val intent = Intent(requireContext(), AddEditDataCustomerActivity::class.java).apply {
+                    putExtra("MODE", "EDIT")
+                    // Pastikan 'it' atau 'item' di sini tidak memiliki list yang null
+                    putExtra("DATA_GRUP", item)
+                }
                 startActivity(intent)
             },
             onDeleteClick = { item ->
