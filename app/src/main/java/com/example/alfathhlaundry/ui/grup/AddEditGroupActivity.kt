@@ -85,7 +85,7 @@ class AddEditGroupActivity : AppCompatActivity() {
             dataItem?.let {
                 etTanggal.setText(it.tanggal)
                 etJam.setText(it.jam)
-                etBerat.setText(it.berat) // Removed .toString() because berat is already String in your model
+                etBerat.setText(it.berat.toString()) // Removed .toString() because berat is already String in your model
                 etJumlah.setText(it.jumlah_orang.toString())
                 setSpinnerValue(spSeragam, it.jenis_pakaian)
                 setSpinnerValue(spKamar, it.kamar)

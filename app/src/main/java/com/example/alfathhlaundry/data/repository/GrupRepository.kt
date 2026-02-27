@@ -2,6 +2,7 @@ package com.example.alfathhlaundry.data.repository
 
 import AddGrupRequest
 import GrupWithCustomer
+import android.util.Log
 import com.example.alfathhlaundry.data.model.response.ApiResponse
 import com.example.alfathhlaundry.data.model.response.GrupListResponse
 import com.example.alfathhlaundry.data.network.ApiService
@@ -31,10 +32,15 @@ class GrupRepository(private val api: ApiService) {
     }
 
     // Tambah grup
-    suspend fun addGrup(request: Any) {
-        val response: Response<ApiResponse> = api.addGrup(request as AddGrupRequest)
-        if (!response.isSuccessful || response.body()?.success != true) {
-            throw Exception(response.body()?.message ?: "Failed to add grup")
+    suspend fun addGrup(request: AddGrupRequest): String {
+        val response = api.addGrup(request)
+        if (response.isSuccessful) {
+            return "Berhasil"
+        } else {
+            // Ini akan memunculkan pesan asli dari Laravel (misal: "status_data is required")
+            val errorDetail = response.errorBody()?.string() ?: "Unknown"
+            Log.e("API_TEST", "ALASAN GAGAL: $errorDetail")
+            return "Gagal: $errorDetail"
         }
     }
 

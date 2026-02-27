@@ -10,7 +10,7 @@ data class GrupWithCustomer(
     val tanggal: String,
     val jam: String,
     val kamar: String,
-    val berat: String,
+    val berat: Double,
     val jenis_pakaian: String,
     val jumlah_orang: Int,
     val status_data: String,

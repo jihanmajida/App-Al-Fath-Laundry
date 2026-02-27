@@ -42,26 +42,26 @@ class FormAdapter(
         val pelanggan = pelangganList[position]
         val detail = detailList.getOrNull(position)
 
-        holder.etNama.addTextChangedListener {
-            pelangganList[position].nama_pelanggan = it.toString() // Pastikan baris ini ada!
-        }
+        holder.etNama.clearFocus()
+
+        //setdata ke view
         holder.etBaju.setText(detail?.baju?.toString() ?: "0")
         holder.etRok.setText(detail?.rok?.toString() ?: "0")
         holder.etJilbab.setText(detail?.jilbab?.toString() ?: "0")
         holder.etKaos.setText(detail?.kaos?.toString() ?: "0")
         holder.etKeterangan.setText(detail?.keterangan ?: "")
 
-        // 🔥 Perbaikan Nama Pelanggan: Langsung update ke referensi list
-        holder.etNama.addTextChangedListener {
-            pelangganList[position].nama_pelanggan = it.toString()
+        holder.etNama.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) pelangganList[position].nama_pelanggan = (v as EditText).text.toString()
         }
 
         // Update detail laundry
-        holder.etBaju.addTextChangedListener { updateDetail(position) { baju = it.toString().toIntOrNull() ?: 0 } }
-        holder.etRok.addTextChangedListener { updateDetail(position) { rok = it.toString().toIntOrNull() ?: 0 } }
-        holder.etJilbab.addTextChangedListener { updateDetail(position) { jilbab = it.toString().toIntOrNull() ?: 0 } }
-        holder.etKaos.addTextChangedListener { updateDetail(position) { kaos = it.toString().toIntOrNull() ?: 0 } }
-        holder.etKeterangan.addTextChangedListener { updateDetail(position) { keterangan = it.toString() } }
+        holder.etNama.addTextChangedListener { pelangganList[holder.adapterPosition].nama_pelanggan = it.toString() }
+        holder.etBaju.addTextChangedListener { updateDetail(holder.adapterPosition) { baju = it.toString().toIntOrNull() ?: 0 } }
+        holder.etRok.addTextChangedListener { updateDetail(holder.adapterPosition) { rok = it.toString().toIntOrNull() ?: 0 } }
+        holder.etJilbab.addTextChangedListener { updateDetail(holder.adapterPosition) { jilbab = it.toString().toIntOrNull() ?: 0 } }
+        holder.etKaos.addTextChangedListener { updateDetail(holder.adapterPosition) { kaos = it.toString().toIntOrNull() ?: 0 } }
+        holder.etKeterangan.addTextChangedListener { updateDetail(holder.adapterPosition) { keterangan = it.toString() } }
     }
 
     private fun updateDetail(position: Int, action: DetailLaundry.() -> Unit) {
@@ -77,7 +77,7 @@ class FormAdapter(
             tanggal = grupSementara.tanggal,
             jam = grupSementara.jam,
             kamar = grupSementara.kamar,
-            berat = grupSementara.berat.toString(),
+            berat = grupSementara.berat.toString().toDoubleOrNull()?:0.0,
             jenis_pakaian = grupSementara.jenisPakaian,
             jumlah_orang = grupSementara.jumlahOrang,
             status_data = "0",
