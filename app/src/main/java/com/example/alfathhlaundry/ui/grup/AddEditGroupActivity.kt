@@ -71,16 +71,13 @@ class AddEditGroupActivity : AppCompatActivity() {
     private fun setupData() {
         val mode = intent.getStringExtra("MODE")
         if (mode == "EDIT") {
-            dataItem = intent.getParcelableExtra<GrupWithCustomer>("EXTRA_DATA")
+            dataItem = intent.getParcelableExtra<GrupWithCustomer>("DATA_GRUP")
 
             dataItem?.let {
                 etTanggal.setText(it.tanggal)
                 etJam.setText(it.jam)
-
-                // WAJIB pakai .toString() untuk Double dan Int agar tidak error
                 etBerat.setText(it.berat.toString())
                 etJumlah.setText(it.jumlah_orang.toString())
-
                 setSpinnerValue(spSeragam, it.jenis_pakaian)
                 setSpinnerValue(spKamar, it.kamar)
             }
@@ -105,32 +102,34 @@ class AddEditGroupActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             if (!validateForm()) return@setOnClickListener
 
-            // Use toDoubleOrNull() to prevent crashes on invalid input
             val berat = etBerat.text.toString().toDoubleOrNull() ?: 0.0
             val jumlah = etJumlah.text.toString().toIntOrNull() ?: 0
-
-            val grup = GrupSementara(
-                etTanggal.text.toString(),
-                etJam.text.toString(),
-                spSeragam.selectedItem.toString(),
-                spKamar.selectedItem.toString(),
-                berat,
-                jumlah
-            )
+            val currentMode = intent.getStringExtra("MODE")
 
             val nextIntent = Intent(this, AddEditDataCustomerActivity::class.java)
-            nextIntent.putExtra("DATA_GRUP", grup)
-
-            // Pass the mode from the current activity to the next one
-            val currentMode = intent.getStringExtra("MODE")
             nextIntent.putExtra("MODE", currentMode)
+            nextIntent.putExtra("JUMLAH", jumlah)
 
-            // If you are in EDIT mode, you MUST also pass the ID or the whole object
-            // so the next screen knows WHICH record to update in the database
-            if (currentMode == "EDIT") {
-                nextIntent.putExtra("EXTRA_DATA", dataItem)
+            if (currentMode == "EDIT" && dataItem != null) {
+                val dataUpdate = dataItem!!.copy(
+                    tanggal = etTanggal.text.toString(),
+                    jam = etJam.text.toString(),
+                    jenis_pakaian = spSeragam.selectedItem.toString(),
+                    kamar = spKamar.selectedItem.toString(),
+                    berat = berat,
+                    jumlah_orang = jumlah
+                )
+                nextIntent.putExtra("DATA_GRUP", dataUpdate)
+            } else {
+                val grup = GrupSementara(
+                    etTanggal.text.toString(), etJam.text.toString(),
+                    spSeragam.selectedItem.toString(), spKamar.selectedItem.toString(),
+                    berat, jumlah
+                )
+                nextIntent.putExtra("DATA_GRUP", grup)
             }
 
+            // PASTIKAN HANYA ADA INI, jangan ada viewModel.updateGrup() di sini!
             startActivity(nextIntent)
         }
     }

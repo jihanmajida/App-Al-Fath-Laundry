@@ -51,10 +51,9 @@ class ListDataFragment : Fragment() {
                 startActivity(intent)
             },
             onEditClick = { item ->
-                // Pastikan key "EXTRA_DATA" atau "DATA_GRUP" konsisten dengan AddEditGroupActivity
-                val intent = Intent(requireContext(), AddEditDataCustomerActivity::class.java).apply {
+                val intent = Intent(requireContext(), AddEditGroupActivity::class.java).apply {
                     putExtra("MODE", "EDIT")
-                    // Pastikan 'it' atau 'item' di sini tidak memiliki list yang null
+                    // Kirim data grup lengkap agar form di halaman grup otomatis terisi data lama
                     putExtra("DATA_GRUP", item)
                 }
                 startActivity(intent)

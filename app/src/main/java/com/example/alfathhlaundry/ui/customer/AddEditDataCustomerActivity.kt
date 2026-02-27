@@ -46,6 +46,7 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_edit_data_customer)
 
         mode = intent.getStringExtra("MODE") ?: "ADD"
+        // 'jumlah' diambil dari inputan terbaru di AddEditGroupActivity
         jumlah = intent.getIntExtra("JUMLAH", 1)
 
         getIntentData()
@@ -85,10 +86,12 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // Gunakan safe call untuk menghindari crash jika data null
         val currentGrup = if (mode == "EDIT") dataGrup else grupSementara
+
+        // 1. Validasi awal: Jika dataGrup null padahal mode EDIT, coba ambil ulang dari intent
         if (currentGrup == null) {
-            Toast.makeText(this, "Data Grup tidak ditemukan", Toast.LENGTH_SHORT).show()
+            Log.e("DEBUG_ERROR", "Data grup null di setupRecyclerView")
+            Toast.makeText(this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -97,44 +100,52 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         val listDetail = ArrayList<DetailLaundry>()
 
         if (mode == "EDIT" && dataGrup != null) {
-            // Gunakan list yang sudah ada dari database
+            // Masukkan data lama
             listPelanggan.addAll(dataGrup!!.pelanggan)
             listDetail.addAll(dataGrup!!.detail_laundry)
-         } else {
+
+            // LOGIKA DINAMIS: Pastikan list tidak kosong sesuai input 'jumlah'
+            if (jumlah > listPelanggan.size) {
+                val selisih = jumlah - listPelanggan.size
+                repeat(selisih) {
+                    listPelanggan.add(Pelanggan(nama_pelanggan = ""))
+                    listDetail.add(DetailLaundry(id = null, id_grup = dataGrup!!.id_grup, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
+                }
+            } else if (jumlah < listPelanggan.size && jumlah > 0) {
+                val newListP = listPelanggan.take(jumlah)
+                val newListD = listDetail.take(jumlah)
+                listPelanggan.clear()
+                listPelanggan.addAll(newListP)
+                listDetail.clear()
+                listDetail.addAll(newListD)
+            }
+        } else {
+            // Mode ADD: Selalu isi sesuai jumlah agar tidak Size: 0
             repeat(jumlah) {
-                // Menambah Pelanggan baru dengan nama kosong
                 listPelanggan.add(Pelanggan(nama_pelanggan = ""))
-
-                // Menambah DetailLaundry baru dengan Named Arguments agar aman dari error urutan
-                listDetail.add(DetailLaundry(
-                    id = null,
-                    id_grup = 0,
-                    id_pelanggan = 0,
-                    baju = 0,
-                    rok = 0,
-                    jilbab = 0,
-                    kaos = 0,
-                    keterangan = "" // Pastikan ini String, jika di model String? maka "" tetap aman
-                ))
+                listDetail.add(DetailLaundry(id = null, id_grup = 0, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
+            }
         }
-    }
 
-        // Buat objek GrupSementara untuk dikirim ke Adapter agar seragam
+        // 2. PROTEKSI AKHIR: Jika list masih kosong (karena variabel jumlah 0), paksa minimal 1 form
+        if (listPelanggan.isEmpty()) {
+            listPelanggan.add(Pelanggan(nama_pelanggan = ""))
+            listDetail.add(DetailLaundry(id = null, id_grup = 0, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
+        }
+
+        // Buat tmpGrup untuk adapter
         val tmpGrup = if (mode == "EDIT" && dataGrup != null) {
             GrupSementara(
-                dataGrup!!.tanggal,
-                dataGrup!!.jam,
-                dataGrup!!.jenis_pakaian,
-                dataGrup!!.kamar,
-                // Pastikan berat dikonversi dengan aman ke Double
-                dataGrup!!.berat.toString().toDoubleOrNull() ?: 0.0,
-                dataGrup!!.jumlah_orang
+                dataGrup!!.tanggal, dataGrup!!.jam, dataGrup!!.jenis_pakaian,
+                dataGrup!!.kamar, dataGrup!!.berat, dataGrup!!.jumlah_orang
             )
         } else {
             grupSementara!!
         }
 
         val idAsli = if (mode == "EDIT") dataGrup?.id_grup ?: 0 else 0
+
+        // Inisialisasi adapter dengan data yang sudah pasti terisi
         adapter = FormAdapter(tmpGrup, listPelanggan, listDetail, idAsli)
         rvForm.layoutManager = LinearLayoutManager(this)
         rvForm.adapter = adapter
@@ -144,11 +155,8 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         btnBack.setOnClickListener { finish() }
 
         btnSimpan.setOnClickListener {
-            // Paksa simpan data dari EditText yang sedang fokus
             currentFocus?.clearFocus()
-
             val data = adapter.getUpdatedGrup()
-            Log.d("API_SEND", "Pelanggan: ${data.pelanggan.size}, Detail: ${data.detail_laundry.size}")
 
             if (data.pelanggan.any { it.nama_pelanggan.isBlank() }) {
                 Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
@@ -156,33 +164,32 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
             }
 
             try {
-                // Konversi tanggal ke format database (yyyy-MM-dd)
+                // Formatter tanggal
+                val inputDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
                 val tanggalFix = try {
-                    val inputDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
-                    val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     outputDateFormat.format(inputDateFormat.parse(data.tanggal)!!)
                 } catch (e: Exception) {
-                    data.tanggal // Gunakan apa adanya jika sudah benar
+                    data.tanggal
                 }
 
                 val request = AddGrupRequest(
                     tanggal = tanggalFix,
                     jam = data.jam,
                     kamar = data.kamar,
-                    berat = data.berat.toString().toDoubleOrNull()?:0.0,
-                    jenisPakaian = data.jenis_pakaian,
-                    jumlahOrang = data.jumlah_orang,
+                    berat = data.berat,
+                    jenisPakaian = data.jenisPakaian,
+                    jumlahOrang = data.jumlahOrang,
                     statusData = "0",
                     pelanggan = data.pelanggan.map { PelangganRequest(it.nama_pelanggan) },
                     detail_laundry = data.detail_laundry.map {
-                        DetailLaundryRequest(it.baju, it.jilbab, it.rok, it.kaos, it.keterangan)
+                        DetailLaundryRequest(it.baju, it.jilbab, it.rok, it.kaos, it.keterangan ?: "")
                     }
                 )
 
-                Log.d("API_REQUEST", request.toString())
-
                 if (mode == "ADD") viewModel.addGrup(request)
-                else viewModel.updateGrup(data.id_grup, request)
+                else data.id?.let { it1 -> viewModel.updateGrup(it1, request) }
 
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Error: ${e.message}")

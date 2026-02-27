@@ -60,9 +60,15 @@ interface ApiService {
     suspend fun searchGrup(
         @Query("nama") nama: String?,
         @Query("tanggal") tanggal: String?
-    ): Response<List<GrupWithCustomer>>
+    ): Response<List<GrupWithCustomer>> // Pakai List langsung, bukan GrupListResponse
 
-    @PUT("grup/{id}")
+//    @PUT("grup/{id}")
+//    suspend fun updateGrup(
+//        @Path("id") id: Int,
+//        @Body request: AddGrupRequest
+//    ): Response<ApiResponse>
+
+    @POST("grup/{id}")
     suspend fun updateGrup(
         @Path("id") id: Int,
         @Body request: AddGrupRequest
