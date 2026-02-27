@@ -1,5 +1,6 @@
 package com.example.alfathhlaundry.ui.showdata
 
+import GrupWithCustomer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +14,8 @@ class ShowDataViewModel(
     private val repository: ShowDataRepository
 ) : ViewModel() {
 
-    private val _showData = MutableLiveData<GrupData>()
-    val showData: LiveData<GrupData> = _showData
+    private val _showData = MutableLiveData<GrupWithCustomer>()
+    val showData: LiveData<GrupWithCustomer> = _showData
 
     fun getShowData(id: Int) {
         viewModelScope.launch {

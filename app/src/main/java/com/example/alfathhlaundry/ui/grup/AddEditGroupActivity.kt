@@ -71,22 +71,16 @@ class AddEditGroupActivity : AppCompatActivity() {
     private fun setupData() {
         val mode = intent.getStringExtra("MODE")
         if (mode == "EDIT") {
-            // 1. Assign the intent data to the class variable dataItem
             dataItem = intent.getParcelableExtra<GrupWithCustomer>("EXTRA_DATA")
 
-            if (dataItem == null) {
-                Log.e("AddEditGroup", "GrupWithCustomer data is missing!")
-                Toast.makeText(this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show()
-                // Optional: finish() if you don't want to show an empty edit screen
-                return
-            }
-
-            // 2. Use the data to fill the fields
             dataItem?.let {
                 etTanggal.setText(it.tanggal)
                 etJam.setText(it.jam)
-                etBerat.setText(it.berat.toString()) // Removed .toString() because berat is already String in your model
+
+                // WAJIB pakai .toString() untuk Double dan Int agar tidak error
+                etBerat.setText(it.berat.toString())
                 etJumlah.setText(it.jumlah_orang.toString())
+
                 setSpinnerValue(spSeragam, it.jenis_pakaian)
                 setSpinnerValue(spKamar, it.kamar)
             }

@@ -7,6 +7,7 @@ import com.example.alfathhlaundry.data.model.response.GrupListResponse
 import com.example.alfathhlaundry.data.model.user.LoginRequest
 import com.example.alfathhlaundry.data.model.user.LoginResponse
 import com.example.alfathhlaundry.data.model.user.ShowDataResponse
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -30,18 +31,17 @@ interface ApiService {
     @DELETE("grup/{id}")
     suspend fun deleteGrup(@Path("id") id: Int): Response<ApiResponse>
 
-    @FormUrlEncoded
-    @PUT("grup/{id}")
+    @POST("grup/{id}/update-status") // Pastikan tidak ada titik dua (:) di dalam kurung kurawal
     suspend fun updateStatus(
         @Path("id") id: Int,
-        @Field("status_data") status: String // Pastikan key ini sama dengan $request->status_data di Laravel
-    ): Response<ApiResponse>
+        @Body body: Map<String, String>
+    ): Response<ResponseBody>
 
     // Get grup by tanggal
-    @GET("grup") // atau endpoint grup kamu
+    @GET("grup")
     suspend fun getGrup(
-        @Query("tanggal") tanggal: String // ✅ Ini akan menghasilkan: grup?tanggal=2026-02-26
-    ): List<GrupWithCustomer>
+        @Query("tanggal") tanggal: String
+    ): Response<List<GrupWithCustomer>>
 
     // Get detail grup by id (tampilkan show data)
     @GET("grup/{id}")
@@ -55,11 +55,12 @@ interface ApiService {
         @Path("id") id: Int
     ): Response<GrupWithCustomer>
 
-    // Search grup (konsisten pakai GrupListResponse)
-    @GET("grup/search")
+    // Search grup
+    @GET("grup")
     suspend fun searchGrup(
-        @Query("keyword") keyword: String
-    ): Response<GrupListResponse>
+        @Query("nama") nama: String?,
+        @Query("tanggal") tanggal: String?
+    ): Response<List<GrupWithCustomer>>
 
     // Update grup
     @PUT("grup/{id}")

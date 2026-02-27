@@ -93,7 +93,7 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
 
         if (mode == "EDIT" && dataGrup != null) {
             listPelanggan.addAll(dataGrup!!.pelanggan)
-            listDetail.addAll(dataGrup!!.detailLaundry)
+            listDetail.addAll(dataGrup!!.detail_laundry)
         } else {
             repeat(jumlah) {
                 listPelanggan.add(Pelanggan(0, ""))
@@ -124,7 +124,7 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
             currentFocus?.clearFocus()
 
             val data = adapter.getUpdatedGrup()
-            Log.d("API_SEND", "Pelanggan: ${data.pelanggan.size}, Detail: ${data.detailLaundry.size}")
+            Log.d("API_SEND", "Pelanggan: ${data.pelanggan.size}, Detail: ${data.detail_laundry.size}")
 
             if (data.pelanggan.any { it.nama_pelanggan.isBlank() }) {
                 Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
@@ -150,7 +150,7 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
                     jumlahOrang = data.jumlah_orang,
                     statusData = "0",
                     pelanggan = data.pelanggan.map { PelangganRequest(it.nama_pelanggan) },
-                    detail_laundry = data.detailLaundry.map {
+                    detail_laundry = data.detail_laundry.map {
                         DetailLaundryRequest(it.baju, it.jilbab, it.rok, it.kaos, it.keterangan)
                     }
                 )

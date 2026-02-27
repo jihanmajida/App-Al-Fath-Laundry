@@ -18,13 +18,12 @@ class SearchViewModel(
     fun search(keyword: String) {
         viewModelScope.launch {
             try {
-                val result = repository.searchGrup(keyword)
+                val result = repository.searchGrup(keyword, null)
 
-                // urut terbaru → terlama
+                android.util.Log.d("SEARCH_DEBUG", "Keyword: $keyword, Hasil: ${result.size}")
                 _searchResult.value = result.reversed()
-
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                _errorMessage.value = "Terjadi kesalahan: ${e.message}"
             }
         }
     }

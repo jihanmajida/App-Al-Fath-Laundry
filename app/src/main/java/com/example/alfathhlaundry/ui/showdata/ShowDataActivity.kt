@@ -66,16 +66,30 @@ class ShowDataActivity : AppCompatActivity() {
 
     private fun observeData() {
         viewModel.showData.observe(this) { data ->
+            if (data == null) {
+                android.util.Log.e("SHOW_DATA", "Data null dari API")
+                return@observe
+            }
 
-            if (data == null) return@observe
-
+            // 1. Set data Header
             tvTitle.text = data.kamar
             tvWaktu.text = "${data.tanggal} ${data.jam}"
-            tvJenis.text = data.jenis
+
+            // GUNAKAN 'jenis_pakaian' sesuai model GrupWithCustomer
+            tvJenis.text = data.jenis_pakaian
             tvBerat.text = "${data.berat} Kg"
 
-            // 🔥 field yang benar sesuai model kamu
-            adapter.updateData(data.data_customer)
+            // 2. Update RecyclerView Pelanggan
+            // GUNAKAN 'pelanggan' karena di Controller Laravel: with('pelanggan')
+            val listPelanggan = data.pelanggan
+
+            android.util.Log.d("SHOW_DATA", "Jumlah Pelanggan: ${listPelanggan.size}")
+
+            if (listPelanggan.isNotEmpty()) {
+                adapter.updateData(listPelanggan)
+            } else {
+                android.util.Log.w("SHOW_DATA", "List pelanggan kosong!")
+            }
         }
     }
 

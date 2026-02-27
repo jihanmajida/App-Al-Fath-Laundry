@@ -7,13 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
 import com.example.alfathhlaundry.data.model.user.CustomerData
+import com.example.alfathhlaundry.data.model.user.Pelanggan
 
 class ShowDataAdapter(
-    private var list: List<CustomerData>
+    private var list: List<Pelanggan>
 ) : RecyclerView.Adapter<ShowDataAdapter.ViewHolder>() {
 
-    fun updateData(newList: List<CustomerData>) {
-        list = newList
+    fun updateData(newList: List<Pelanggan>) {
+        this.list = newList
         notifyDataSetChanged()
     }
 
@@ -32,8 +33,7 @@ class ShowDataAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-
-        holder.tvJudul.text = "Kamar"
-        holder.tvNama.text = item.nama_pelanggan
+        holder.tvJudul.text = "Pelanggan ${position + 1}"
+        holder.tvNama.text = item.nama_pelanggan // Pastikan CustomerData punya @SerializedName("nama_pelanggan")
     }
 }

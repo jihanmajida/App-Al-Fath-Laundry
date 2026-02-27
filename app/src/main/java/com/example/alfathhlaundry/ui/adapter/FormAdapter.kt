@@ -84,7 +84,7 @@ class FormAdapter(
             created_at = "",
             updated_at = "",
             pelanggan = pelangganList,
-            detailLaundry = detailList
+            detail_laundry = detailList
         )
     }
 }

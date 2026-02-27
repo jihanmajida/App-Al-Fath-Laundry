@@ -12,7 +12,26 @@ class GrupRepository(private val api: ApiService) {
 
     // Load grup berdasarkan tanggal
     suspend fun getTodayData(tanggal: String): List<GrupWithCustomer> {
-        return api.getGrup(tanggal)
+        val response = api.getGrup(tanggal)
+        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    }
+
+    // Search grup: SEKARANG KONSISTEN MENGGUNAKAN List<GrupWithCustomer>
+    suspend fun searchGrup(nama: String?, tanggal: String?): List<GrupWithCustomer> {
+        try {
+            val response = api.searchGrup(nama, tanggal)
+
+            if (response.isSuccessful) {
+                // Sekarang tipe data response.body() (List) akan cocok dengan return type fungsi ini
+                return response.body() ?: emptyList()
+            } else {
+                Log.e("SEARCH_ERROR", "URL: ${response.raw().request.url}")
+                throw Exception("Failed to search: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Log.e("SEARCH_ERROR", "Exception: ${e.message}")
+            throw e
+        }
     }
 
     // Delete grup
@@ -25,9 +44,14 @@ class GrupRepository(private val api: ApiService) {
 
     // Update status
     suspend fun updateStatus(id: Int, status: String) {
-        val response = api.updateStatus(id, status)
+        // Key harus "status_data" (pake underscore), bukan "statusData"
+        val body = mapOf("status_data" to status)
+        val response = api.updateStatus(id, body)
+
         if (!response.isSuccessful) {
-            throw Exception("Failed to update status: ${response.code()}")
+            val errorPesat = response.errorBody()?.string()
+            Log.e("API_ERROR", "Pesan dari Server: $errorPesat")
+            throw Exception("Gagal: ${response.code()}")
         }
     }
 
@@ -50,18 +74,5 @@ class GrupRepository(private val api: ApiService) {
         if (!response.isSuccessful || response.body()?.success != true) {
             throw Exception(response.body()?.message ?: "Failed to update grup")
         }
-    }
-
-    // Optional: search grup
-    suspend fun searchGrup(keyword: String): List<GrupWithCustomer> {
-        val response = api.searchGrup(keyword)
-
-        if (!response.isSuccessful) {
-            throw Exception("Failed to search: ${response.code()}")
-        }
-
-        val body = response.body() ?: throw Exception("Response body null")
-
-        return body.result   // ✅ langsung ambil result
     }
 }
