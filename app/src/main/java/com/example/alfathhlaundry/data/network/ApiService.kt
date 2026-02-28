@@ -13,13 +13,11 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // ----------------- AUTH -----------------
     @POST("login")
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
 
-    // ----------------- GRUP -----------------
     // Add grup
     @POST("grup")
     suspend fun addGrup(
@@ -68,7 +66,7 @@ interface ApiService {
 //        @Body request: AddGrupRequest
 //    ): Response<ApiResponse>
 
-    @POST("grup/{id}")
+    @PUT("grup/{id}")
     suspend fun updateGrup(
         @Path("id") id: Int,
         @Body request: AddGrupRequest

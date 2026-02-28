@@ -16,15 +16,11 @@ import com.example.alfathhlaundry.ui.home.HomeActivity
 import com.example.alfathhlaundry.utils.Resource
 
 class LoginActivity : AppCompatActivity() {
-
-    // 🔧 SUDAH BENAR
     val apiService = RetrofitClient.getInstance(this)
     val repository = AuthRepository(apiService)
-
     private val viewModel: LoginViewModel by viewModels {
         LoginViewModelFactory(repository)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

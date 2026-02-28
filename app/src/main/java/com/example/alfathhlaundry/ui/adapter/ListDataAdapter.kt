@@ -39,7 +39,8 @@ class ListDataAdapter(
         val item = listData[position]
 
         holder.tvJudul.text = item.kamar
-        holder.tvNama.text = item.pelanggan.firstOrNull()?.nama_pelanggan ?: "-"
+        val daftarNama = item.pelanggan.joinToString(separator = ", ") { it.nama_pelanggan }
+        holder.tvNama.text = if (daftarNama.isNotBlank()) daftarNama else "-"
         holder.tvBerat.text = "${item.berat} Kg"
 
         holder.itemView.setOnClickListener { onItemClick(item) }

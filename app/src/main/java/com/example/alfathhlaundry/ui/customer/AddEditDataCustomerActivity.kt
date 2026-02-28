@@ -156,7 +156,17 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
 
         btnSimpan.setOnClickListener {
             currentFocus?.clearFocus()
+
+            // Ambil data terbaru dari adapter
             val data = adapter.getUpdatedGrup()
+
+            // DEBUG: Cek apakah list detail_laundry benar-benar ada isinya
+            Log.d("API_TEST", "Detail Size: ${data.detail_laundry.size}")
+
+            if (data.pelanggan.isEmpty() || data.detail_laundry.isEmpty()) {
+                Toast.makeText(this, "Data pelanggan atau detail laundry tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (data.pelanggan.any { it.nama_pelanggan.isBlank() }) {
                 Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
@@ -164,7 +174,6 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
             }
 
             try {
-                // Formatter tanggal
                 val inputDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
                 val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
@@ -174,7 +183,9 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
                     data.tanggal
                 }
 
+                // BUAT REQUEST OBJECT
                 val request = AddGrupRequest(
+                    id = if (mode == "EDIT") dataGrup?.id_grup else null, // Masukkan ID di sini
                     tanggal = tanggalFix,
                     jam = data.jam,
                     kamar = data.kamar,
@@ -183,16 +194,31 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
                     jumlahOrang = data.jumlahOrang,
                     statusData = "0",
                     pelanggan = data.pelanggan.map { PelangganRequest(it.nama_pelanggan) },
+                    // PASTIKAN MAPPING INI BENAR
                     detail_laundry = data.detail_laundry.map {
-                        DetailLaundryRequest(it.baju, it.jilbab, it.rok, it.kaos, it.keterangan ?: "")
+                        DetailLaundryRequest(
+                            baju = it.baju,
+                            jilbab = it.jilbab,
+                            rok = it.rok,
+                            kaos = it.kaos,
+                            keterangan = it.keterangan ?: ""
+                        )
                     }
                 )
 
-                if (mode == "ADD") viewModel.addGrup(request)
-                else data.id?.let { it1 -> viewModel.updateGrup(it1, request) }
+                if (mode == "ADD") {
+                    viewModel.addGrup(request)
+                } else {
+                    val idToUpdate = dataGrup?.id_grup ?: 0
+                    if (idToUpdate != 0) {
+                        viewModel.updateGrup(idToUpdate, request)
+                    } else {
+                        Toast.makeText(this, "ID Grup tidak ditemukan", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
             } catch (e: Exception) {
-                Log.e("API_ERROR", "Error: ${e.message}")
+                Log.e("API_ERROR", "Error Building Request: ${e.message}")
                 Toast.makeText(this, "Terjadi kesalahan data", Toast.LENGTH_LONG).show()
             }
         }

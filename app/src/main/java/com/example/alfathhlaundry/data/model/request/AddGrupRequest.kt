@@ -18,9 +18,9 @@ data class PelangganRequest(
 )
 
 data class DetailLaundryRequest(
-    val baju : Int,
-    val jilbab: Int,
-    val rok : Int,
-    val kaos : Int,
-    val keterangan : String?
+    @SerializedName("baju") val baju : Int,
+    @SerializedName("jilbab") val jilbab: Int,
+    @SerializedName("rok") val rok : Int,
+    @SerializedName("kaos") val kaos : Int,
+    @SerializedName("keterangan") val keterangan : String?
 )

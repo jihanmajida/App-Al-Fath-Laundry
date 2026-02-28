@@ -159,12 +159,12 @@ class FormAdapter(
         }
 
         return AddGrupRequest(
-            id = idGrupAsli,
+            id = if (idGrupAsli != 0) idGrupAsli else null,
             tanggal = grupSementara.tanggal,
             jam = grupSementara.jam,
             kamar = grupSementara.kamar,
             berat = grupSementara.berat,
-            jenisPakaian = grupSementara.jenisPakaian, // Pastikan ini terisi string (bukan null)
+            jenisPakaian = grupSementara.jenisPakaian,
             jumlahOrang = grupSementara.jumlahOrang,
             statusData = "0",
             pelanggan = mappedPelanggan,

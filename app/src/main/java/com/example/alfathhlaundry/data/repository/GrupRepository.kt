@@ -87,10 +87,18 @@ class GrupRepository(private val api: ApiService) {
     }
 
     // Update grup
-    suspend fun updateGrup(id: Int, request: Any) {
-        val response: Response<ApiResponse> = api.updateGrup(id, request as AddGrupRequest)
-        if (!response.isSuccessful || response.body()?.success != true) {
-            throw Exception(response.body()?.message ?: "Failed to update grup")
+    suspend fun updateGrup(id: Int, request: AddGrupRequest) {
+        val response = api.updateGrup(id, request)
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body?.success != true) {
+                // LOG THE REAL MESSAGE HERE
+                Log.e("API_TEST", "Server rejected because: ${body?.message}")
+                throw Exception(body?.message ?: "Server rejected update")
+            }
+        } else {
+            Log.e("API_TEST", "HTTP Error: ${response.code()} - ${response.errorBody()?.string()}")
+            throw Exception("HTTP Error: ${response.code()}")
         }
     }
 }
