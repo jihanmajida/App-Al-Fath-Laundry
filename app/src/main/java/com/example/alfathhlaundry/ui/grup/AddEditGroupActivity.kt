@@ -71,15 +71,22 @@ class AddEditGroupActivity : AppCompatActivity() {
     private fun setupData() {
         val mode = intent.getStringExtra("MODE")
         if (mode == "EDIT") {
-            dataItem = intent.getParcelableExtra<GrupWithCustomer>("DATA_GRUP")
+            // Gunakan pengecekan versi SDK agar lebih stabil
+            dataItem = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("DATA_GRUP", GrupWithCustomer::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra("DATA_GRUP")
+            }
 
             dataItem?.let {
                 etTanggal.setText(it.tanggal)
                 etJam.setText(it.jam)
                 etBerat.setText(it.berat.toString())
                 etJumlah.setText(it.jumlah_orang.toString())
-                setSpinnerValue(spSeragam, it.jenis_pakaian)
-                setSpinnerValue(spKamar, it.kamar)
+                // Pastikan Spinner diisi SETELAH adapter spinner selesai dibuat
+                spSeragam.post { setSpinnerValue(spSeragam, it.jenis_pakaian) }
+                spKamar.post { setSpinnerValue(spKamar, it.kamar) }
             }
         }
     }

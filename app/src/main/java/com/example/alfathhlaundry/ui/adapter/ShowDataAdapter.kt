@@ -6,19 +6,22 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alfathhlaundry.R
+import com.example.alfathhlaundry.data.model.user.DetailLaundry
 import com.example.alfathhlaundry.data.model.user.Pelanggan
 
 class ShowDataAdapter(
-    private var list: List<Pelanggan>
+    private var detailList: List<DetailLaundry>,
+    private var pelangganList: List<Pelanggan>
 ) : RecyclerView.Adapter<ShowDataAdapter.ViewHolder>() {
 
-    fun updateData(newList: List<Pelanggan>) {
-        this.list = newList
+    // Fungsi untuk memperbarui data dari Activity
+    fun updateData(newDetails: List<DetailLaundry>, newPelanggans: List<Pelanggan>) {
+        this.detailList = newDetails
+        this.pelangganList = newPelanggans
         notifyDataSetChanged()
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // ID ini harus sesuai dengan item_rv_show_data.xml
         val tvNama: TextView = view.findViewById(R.id.tvNama)
         val tvBaju: TextView = view.findViewById(R.id.tvBaju)
         val tvRok: TextView = view.findViewById(R.id.tvRok)
@@ -33,17 +36,26 @@ class ShowDataAdapter(
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = detailList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
+        // Sumber utama data adalah detailList (angka-angka)
+        val detail = detailList[position]
 
-        holder.tvNama.text = item.nama_pelanggan
-        holder.tvBaju.text = (item.baju ?: 0).toString()
-        holder.tvRok.text = (item.rok ?: 0).toString()
-        holder.tvJilbab.text = (item.jilbab ?: 0).toString()
-        holder.tvKaos.text = (item.kaos ?: 0).toString()
+        // Cari Nama Pelanggan yang ID-nya cocok dengan id_pelanggan di tabel detail_laundry
+        // Jika tidak ketemu, gunakan index position sebagai fallback (asumsi urutan sama)
+        val pelanggan = pelangganList.find { it.id_pelanggan == detail.id_pelanggan }
+            ?: pelangganList.getOrNull(position)
 
-        holder.tvKeterangan.text = if (item.keterangan.isNullOrEmpty()) "-" else item.keterangan
+        // Set Nama
+        holder.tvNama.text = pelanggan?.nama_pelanggan ?: "Pelanggan ${position + 1}"
+
+        // Set Angka (Sekarang ambil dari objek 'detail', bukan 'pelanggan')
+        holder.tvBaju.text = detail.baju.toString()
+        holder.tvRok.text = detail.rok.toString()
+        holder.tvJilbab.text = detail.jilbab.toString()
+        holder.tvKaos.text = detail.kaos.toString()
+
+        holder.tvKeterangan.text = if (detail.keterangan.isNullOrEmpty()) "-" else detail.keterangan
     }
 }

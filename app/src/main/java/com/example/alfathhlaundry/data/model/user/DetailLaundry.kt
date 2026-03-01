@@ -10,5 +10,7 @@ data class DetailLaundry(
     var rok: Int,
     var jilbab: Int,
     var kaos: Int,
-    var keterangan: String?
-) :Serializable
+    var keterangan: String?,
+    val created_at: String? = null, // Tambahkan ini
+    val updated_at: String? = null  // Tambahkan ini
+) : Serializable

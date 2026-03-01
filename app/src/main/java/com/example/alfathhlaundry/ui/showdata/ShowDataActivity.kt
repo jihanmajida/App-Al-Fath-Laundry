@@ -2,6 +2,7 @@ package com.example.alfathhlaundry.ui.showdata
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
@@ -35,11 +36,10 @@ class ShowDataActivity : AppCompatActivity() {
         setupBack()
 
         val idGrup = intent.getIntExtra("ID_GRUP", 0)
-
         if (idGrup != 0) {
             viewModel.getShowData(idGrup)
         } else {
-            finish() // kalau id tidak ada, tutup activity
+            finish()
         }
     }
 
@@ -53,7 +53,8 @@ class ShowDataActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ShowDataAdapter(emptyList())
+        // Inisialisasi adapter dengan list kosong
+        adapter = ShowDataAdapter(emptyList(), emptyList())
         rvPelanggan.layoutManager = LinearLayoutManager(this)
         rvPelanggan.adapter = adapter
     }
@@ -67,35 +68,28 @@ class ShowDataActivity : AppCompatActivity() {
     private fun observeData() {
         viewModel.showData.observe(this) { data ->
             if (data == null) {
-                android.util.Log.e("SHOW_DATA", "Data null dari API")
+                Log.e("SHOW_DATA", "Data null dari API")
                 return@observe
             }
 
-            // 1. Set data Header
+            // Set Header
             tvTitle.text = data.kamar
             tvWaktu.text = "${data.tanggal} ${data.jam}"
-
-            // GUNAKAN 'jenis_pakaian' sesuai model GrupWithCustomer
             tvJenis.text = data.jenis_pakaian
             tvBerat.text = "${data.berat} Kg"
 
-            // 2. Update RecyclerView Pelanggan
-            // GUNAKAN 'pelanggan' karena di Controller Laravel: with('pelanggan')
-            val listPelanggan = data.pelanggan
+            // Ambil kedua list dari response
+            val listPelanggan = data.pelanggan ?: emptyList()
+            val listDetail = data.detail_laundry ?: emptyList()
 
-            android.util.Log.d("SHOW_DATA", "Jumlah Pelanggan: ${listPelanggan.size}")
+            Log.d("SHOW_DATA", "Pelanggan: ${listPelanggan.size}, Detail: ${listDetail.size}")
 
-            if (listPelanggan.isNotEmpty()) {
-                adapter.updateData(listPelanggan)
-            } else {
-                android.util.Log.w("SHOW_DATA", "List pelanggan kosong!")
-            }
+            // Update adapter dengan kedua data tersebut
+            adapter.updateData(listDetail, listPelanggan)
         }
     }
 
     private fun setupBack() {
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
     }
 }

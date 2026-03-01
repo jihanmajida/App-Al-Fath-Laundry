@@ -90,14 +90,12 @@ class GrupRepository(private val api: ApiService) {
     suspend fun updateGrup(id: Int, request: AddGrupRequest) {
         val response = api.updateGrup(id, request)
         if (response.isSuccessful) {
-            val body = response.body()
-            if (body?.success != true) {
-                // LOG THE REAL MESSAGE HERE
-                Log.e("API_TEST", "Server rejected because: ${body?.message}")
-                throw Exception(body?.message ?: "Server rejected update")
-            }
+            // Karena Laravel me-return data Grup (bukan objek ApiResponse {success:true}),
+            // kita cukup cek isSuccessful saja.
+            Log.d("API_TEST", "Update Berhasil: ${response.body()}")
         } else {
-            Log.e("API_TEST", "HTTP Error: ${response.code()} - ${response.errorBody()?.string()}")
+            val errorMsg = response.errorBody()?.string() ?: "Unknown Error"
+            Log.e("API_TEST", "HTTP Error: ${response.code()} - $errorMsg")
             throw Exception("HTTP Error: ${response.code()}")
         }
     }

@@ -14,7 +14,7 @@ data class AddGrupRequest(
 )
 
 data class PelangganRequest(
-    val nama_pelanggan: String
+    @SerializedName("nama_pelanggan") val nama_pelanggan: String
 )
 
 data class DetailLaundryRequest(

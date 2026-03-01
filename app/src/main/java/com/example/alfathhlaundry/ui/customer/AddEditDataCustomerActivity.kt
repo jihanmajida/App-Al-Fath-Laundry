@@ -46,7 +46,6 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_edit_data_customer)
 
         mode = intent.getStringExtra("MODE") ?: "ADD"
-        // 'jumlah' diambil dari inputan terbaru di AddEditGroupActivity
         jumlah = intent.getIntExtra("JUMLAH", 1)
 
         getIntentData()
@@ -86,69 +85,60 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val currentGrup = if (mode == "EDIT") dataGrup else grupSementara
-
-        // 1. Validasi awal: Jika dataGrup null padahal mode EDIT, coba ambil ulang dari intent
-        if (currentGrup == null) {
-            Log.e("DEBUG_ERROR", "Data grup null di setupRecyclerView")
-            Toast.makeText(this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
-
         val listPelanggan = ArrayList<Pelanggan>()
         val listDetail = ArrayList<DetailLaundry>()
 
+        // 1. Ambil data dari API/Intent jika EDIT
         if (mode == "EDIT" && dataGrup != null) {
-            // Masukkan data lama
+            // Log untuk memastikan data dari server ada isinya
+            Log.d("DEBUG_APP", "Data Pelanggan dari API: ${dataGrup?.pelanggan?.size}")
+            Log.d("DEBUG_APP", "Data Detail dari API: ${dataGrup?.detail_laundry?.size}")
+
             listPelanggan.addAll(dataGrup!!.pelanggan)
             listDetail.addAll(dataGrup!!.detail_laundry)
-
-            // LOGIKA DINAMIS: Pastikan list tidak kosong sesuai input 'jumlah'
-            if (jumlah > listPelanggan.size) {
-                val selisih = jumlah - listPelanggan.size
-                repeat(selisih) {
-                    listPelanggan.add(Pelanggan(nama_pelanggan = ""))
-                    listDetail.add(DetailLaundry(id = null, id_grup = dataGrup!!.id_grup, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
-                }
-            } else if (jumlah < listPelanggan.size && jumlah > 0) {
-                val newListP = listPelanggan.take(jumlah)
-                val newListD = listDetail.take(jumlah)
-                listPelanggan.clear()
-                listPelanggan.addAll(newListP)
-                listDetail.clear()
-                listDetail.addAll(newListD)
-            }
-        } else {
-            // Mode ADD: Selalu isi sesuai jumlah agar tidak Size: 0
-            repeat(jumlah) {
-                listPelanggan.add(Pelanggan(nama_pelanggan = ""))
-                listDetail.add(DetailLaundry(id = null, id_grup = 0, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
-            }
         }
 
-        // 2. PROTEKSI AKHIR: Jika list masih kosong (karena variabel jumlah 0), paksa minimal 1 form
-        if (listPelanggan.isEmpty()) {
+        // 2. SINKRONISASI TOTAL
+        // Pastikan jumlah form sesuai dengan variabel 'jumlah'
+        while (listPelanggan.size < jumlah) {
             listPelanggan.add(Pelanggan(nama_pelanggan = ""))
-            listDetail.add(DetailLaundry(id = null, id_grup = 0, id_pelanggan = 0, baju = 0, rok = 0, jilbab = 0, kaos = 0, keterangan = ""))
         }
 
-        // Buat tmpGrup untuk adapter
-        val tmpGrup = if (mode == "EDIT" && dataGrup != null) {
-            GrupSementara(
-                dataGrup!!.tanggal, dataGrup!!.jam, dataGrup!!.jenis_pakaian,
-                dataGrup!!.kamar, dataGrup!!.berat, dataGrup!!.jumlah_orang
-            )
+        while (listDetail.size < jumlah) {
+            listDetail.add(DetailLaundry(
+                id = null,
+                id_grup = dataGrup?.id_grup ?: 0,
+                id_pelanggan = 0,
+                baju = 0, rok = 0, jilbab = 0, kaos = 0,
+                keterangan = ""
+            ))
+        }
+
+        // Jika kelebihan (misal data di DB ada 5, tapi user input jumlah 2)
+        if (listPelanggan.size > jumlah) {
+            val p = listPelanggan.take(jumlah)
+            listPelanggan.clear()
+            listPelanggan.addAll(p)
+        }
+        if (listDetail.size > jumlah) {
+            val d = listDetail.take(jumlah)
+            listDetail.clear()
+            listDetail.addAll(d)
+        }
+
+        val currentGrup = if (mode == "EDIT" && dataGrup != null) {
+            GrupSementara(dataGrup!!.tanggal, dataGrup!!.jam, dataGrup!!.jenis_pakaian, dataGrup!!.kamar, dataGrup!!.berat, jumlah)
         } else {
-            grupSementara!!
+            grupSementara ?: GrupSementara("", "", "", "", 0.0, jumlah)
         }
 
-        val idAsli = if (mode == "EDIT") dataGrup?.id_grup ?: 0 else 0
-
-        // Inisialisasi adapter dengan data yang sudah pasti terisi
-        adapter = FormAdapter(tmpGrup, listPelanggan, listDetail, idAsli)
+        // 3. Inisialisasi Adapter
+        adapter = FormAdapter(currentGrup, listPelanggan, listDetail, dataGrup?.id_grup ?: 0)
         rvForm.layoutManager = LinearLayoutManager(this)
         rvForm.adapter = adapter
+
+        // Tambahkan ini untuk memastikan UI refresh setelah data siap
+        adapter.notifyDataSetChanged()
     }
 
     private fun setupClick() {
@@ -157,69 +147,30 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
         btnSimpan.setOnClickListener {
             currentFocus?.clearFocus()
 
-            // Ambil data terbaru dari adapter
-            val data = adapter.getUpdatedGrup()
+            val updatedData = adapter.getUpdatedGrup()
 
-            // DEBUG: Cek apakah list detail_laundry benar-benar ada isinya
-            Log.d("API_TEST", "Detail Size: ${data.detail_laundry.size}")
-
-            if (data.pelanggan.isEmpty() || data.detail_laundry.isEmpty()) {
-                Toast.makeText(this, "Data pelanggan atau detail laundry tidak boleh kosong", Toast.LENGTH_SHORT).show()
+            if (updatedData.pelanggan.any { it.nama_pelanggan.isBlank() }) {
+                Toast.makeText(this, "Semua nama pelanggan harus diisi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (data.pelanggan.any { it.nama_pelanggan.isBlank() }) {
-                Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            try {
-                val inputDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-                val tanggalFix = try {
-                    outputDateFormat.format(inputDateFormat.parse(data.tanggal)!!)
-                } catch (e: Exception) {
-                    data.tanggal
-                }
-
-                // BUAT REQUEST OBJECT
-                val request = AddGrupRequest(
-                    id = if (mode == "EDIT") dataGrup?.id_grup else null, // Masukkan ID di sini
-                    tanggal = tanggalFix,
-                    jam = data.jam,
-                    kamar = data.kamar,
-                    berat = data.berat,
-                    jenisPakaian = data.jenisPakaian,
-                    jumlahOrang = data.jumlahOrang,
-                    statusData = "0",
-                    pelanggan = data.pelanggan.map { PelangganRequest(it.nama_pelanggan) },
-                    // PASTIKAN MAPPING INI BENAR
-                    detail_laundry = data.detail_laundry.map {
-                        DetailLaundryRequest(
-                            baju = it.baju,
-                            jilbab = it.jilbab,
-                            rok = it.rok,
-                            kaos = it.kaos,
-                            keterangan = it.keterangan ?: ""
-                        )
-                    }
-                )
-
-                if (mode == "ADD") {
-                    viewModel.addGrup(request)
-                } else {
-                    val idToUpdate = dataGrup?.id_grup ?: 0
-                    if (idToUpdate != 0) {
-                        viewModel.updateGrup(idToUpdate, request)
-                    } else {
-                        Toast.makeText(this, "ID Grup tidak ditemukan", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
+            val tanggalFix = try {
+                val inputFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                outputFormat.format(inputFormat.parse(updatedData.tanggal)!!)
             } catch (e: Exception) {
-                Log.e("API_ERROR", "Error Building Request: ${e.message}")
-                Toast.makeText(this, "Terjadi kesalahan data", Toast.LENGTH_LONG).show()
+                updatedData.tanggal
+            }
+
+            val request = updatedData.copy(
+                id = if (mode == "EDIT") dataGrup?.id_grup else null,
+                tanggal = tanggalFix
+            )
+
+            if (mode == "ADD") {
+                viewModel.addGrup(request)
+            } else {
+                viewModel.updateGrup(dataGrup?.id_grup ?: 0, request)
             }
         }
     }
@@ -232,7 +183,6 @@ class AddEditDataCustomerActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
         viewModel.errorMessage.observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }

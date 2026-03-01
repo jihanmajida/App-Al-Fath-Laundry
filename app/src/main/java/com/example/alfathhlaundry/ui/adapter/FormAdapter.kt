@@ -2,7 +2,6 @@ package com.example.alfathhlaundry.ui.adapter
 
 import AddGrupRequest
 import DetailLaundryRequest
-import GrupWithCustomer
 import PelangganRequest
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,7 +20,7 @@ class FormAdapter(
     private val idGrupAsli: Int = 0
 ) : RecyclerView.Adapter<FormAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val etNama: EditText = itemView.findViewById(R.id.etNama)
         val etBaju: EditText = itemView.findViewById(R.id.etBaju)
         val etRok: EditText = itemView.findViewById(R.id.etRok)
@@ -29,7 +28,6 @@ class FormAdapter(
         val etKaos: EditText = itemView.findViewById(R.id.etKaos)
         val etKeterangan: EditText = itemView.findViewById(R.id.etKeterangan)
 
-        // Variabel untuk menyimpan listener agar bisa dihapus (mencegah duplikasi)
         var nameWatcher: TextWatcher? = null
         var bajuWatcher: TextWatcher? = null
         var rokWatcher: TextWatcher? = null
@@ -41,86 +39,31 @@ class FormAdapter(
     override fun getItemCount(): Int = pelangganList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_add_data_customer, parent, false)
-        return ViewHolder(view)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_add_data_customer, parent, false)
+        return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val pelanggan = pelangganList.getOrNull(position) ?: Pelanggan(
-            id_pelanggan = 0, // atau "" jika tipe datanya String
-            nama_pelanggan = ""
-        )
-
-        val detail = detailList.getOrNull(position) ?: DetailLaundry(
-            id = null,
-            id_grup = idGrupAsli,
-            id_pelanggan = 0,
-            baju = 0,
-            rok = 0,
-            jilbab = 0,
-            kaos = 0,
-            keterangan = ""
-        )
+        val currentPos = holder.adapterPosition
+        if (currentPos == RecyclerView.NO_POSITION) return
 
         removeWatchers(holder)
 
-        // Set Data ke View
+        // Ambil data dengan aman
+        val pelanggan = pelangganList[currentPos]
+        val detail = detailList[currentPos]
+
+        // SET DATA KE UI
         holder.etNama.setText(pelanggan.nama_pelanggan)
-        holder.etBaju.setText(detail.baju.toString())
-        holder.etRok.setText(detail.rok.toString())
-        holder.etJilbab.setText(detail.jilbab.toString())
-        holder.etKaos.setText(detail.kaos.toString())
+
+        // Debugging: Jika field tetap kosong, artinya detail.baju bernilai 0 atau null
+        holder.etBaju.setText(if (detail.baju == 0) "" else detail.baju.toString())
+        holder.etRok.setText(if (detail.rok == 0) "" else detail.rok.toString())
+        holder.etJilbab.setText(if (detail.jilbab == 0) "" else detail.jilbab.toString())
+        holder.etKaos.setText(if (detail.kaos == 0) "" else detail.kaos.toString())
         holder.etKeterangan.setText(detail.keterangan ?: "")
 
-        setupWatchers(holder, position)
-    }
-
-    private fun setupWatchers(holder: ViewHolder, position: Int) {
-        // Kita gunakan holder.adapterPosition karena bindingAdapterPosition merah (masalah versi library)
-        // adapterPosition akan mengambil index terbaru secara real-time saat user mengetik
-
-        holder.nameWatcher = holder.etNama.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < pelangganList.size) {
-                pelangganList[currentPos].nama_pelanggan = text
-            }
-        }
-
-        holder.bajuWatcher = holder.etBaju.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < detailList.size) {
-                detailList[currentPos].baju = text.toIntOrNull() ?: 0
-            }
-        }
-
-        holder.rokWatcher = holder.etRok.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < detailList.size) {
-                detailList[currentPos].rok = text.toIntOrNull() ?: 0
-            }
-        }
-
-        holder.jilbabWatcher = holder.etJilbab.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < detailList.size) {
-                detailList[currentPos].jilbab = text.toIntOrNull() ?: 0
-            }
-        }
-
-        holder.kaosWatcher = holder.etKaos.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < detailList.size) {
-                detailList[currentPos].kaos = text.toIntOrNull() ?: 0
-            }
-        }
-
-        holder.ketWatcher = holder.etKeterangan.addSimpleWatcher { text ->
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && currentPos < detailList.size) {
-                detailList[currentPos].keterangan = text
-            }
-        }
+        setupWatchers(holder, currentPos)
     }
 
     private fun removeWatchers(holder: ViewHolder) {
@@ -132,32 +75,31 @@ class FormAdapter(
         holder.etKeterangan.removeTextChangedListener(holder.ketWatcher)
     }
 
-    // Extension function untuk meringkas TextWatcher
-    private fun EditText.addSimpleWatcher(onChanged: (String) -> Unit): TextWatcher {
-        val watcher = object : TextWatcher {
+    private fun setupWatchers(holder: ViewHolder, position: Int) {
+        holder.nameWatcher = createWatcher { pelangganList[position].nama_pelanggan = it }
+        holder.bajuWatcher = createWatcher { detailList[position].baju = it.toIntOrNull() ?: 0 }
+        holder.rokWatcher = createWatcher { detailList[position].rok = it.toIntOrNull() ?: 0 }
+        holder.jilbabWatcher = createWatcher { detailList[position].jilbab = it.toIntOrNull() ?: 0 }
+        holder.kaosWatcher = createWatcher { detailList[position].kaos = it.toIntOrNull() ?: 0 }
+        holder.ketWatcher = createWatcher { detailList[position].keterangan = it }
+
+        holder.etNama.addTextChangedListener(holder.nameWatcher)
+        holder.etBaju.addTextChangedListener(holder.bajuWatcher)
+        holder.etRok.addTextChangedListener(holder.rokWatcher)
+        holder.etJilbab.addTextChangedListener(holder.jilbabWatcher)
+        holder.etKaos.addTextChangedListener(holder.kaosWatcher)
+        holder.etKeterangan.addTextChangedListener(holder.ketWatcher)
+    }
+
+    private fun createWatcher(onChanged: (String) -> Unit): TextWatcher {
+        return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { onChanged(s.toString()) }
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) { onChanged(s?.toString() ?: "") }
         }
-        this.addTextChangedListener(watcher)
-        return watcher
     }
 
     fun getUpdatedGrup(): AddGrupRequest {
-        val mappedPelanggan = pelangganList.map {
-            PelangganRequest(nama_pelanggan = it.nama_pelanggan)
-        }
-
-        val mappedDetail = detailList.map {
-            DetailLaundryRequest(
-                baju = it.baju,
-                jilbab = it.jilbab,
-                rok = it.rok,
-                kaos = it.kaos,
-                keterangan = it.keterangan
-            )
-        }
-
         return AddGrupRequest(
             id = if (idGrupAsli != 0) idGrupAsli else null,
             tanggal = grupSementara.tanggal,
@@ -165,10 +107,21 @@ class FormAdapter(
             kamar = grupSementara.kamar,
             berat = grupSementara.berat,
             jenisPakaian = grupSementara.jenisPakaian,
-            jumlahOrang = grupSementara.jumlahOrang,
+            jumlahOrang = pelangganList.size,
             statusData = "0",
-            pelanggan = mappedPelanggan,
-            detail_laundry = mappedDetail
+            // Mapping dengan lebih teliti
+            pelanggan = pelangganList.map {
+                PelangganRequest(it.nama_pelanggan)
+            },
+            detail_laundry = detailList.map {
+                DetailLaundryRequest(
+                    baju = it.baju,
+                    jilbab = it.jilbab,
+                    rok = it.rok,
+                    kaos = it.kaos,
+                    keterangan = it.keterangan ?: ""
+                )
+            }
         )
     }
 }
