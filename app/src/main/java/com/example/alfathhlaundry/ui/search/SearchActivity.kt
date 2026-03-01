@@ -18,16 +18,15 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var rvSearch: RecyclerView
     private lateinit var etSearch: EditText
-    private lateinit var btnSearch: ImageView
-    private lateinit var btnBack: ImageView
+    private lateinit var btnSearch: ImageButton // PERBAIKAN: Gunakan ImageButton
+    private lateinit var btnBack: ImageButton   // PERBAIKAN: Gunakan ImageButton
     private lateinit var tvEmpty: TextView
+    private lateinit var layoutEmpty: View      // Tambahan untuk container kosong
 
     private lateinit var adapter: SearchAdapter
 
     private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(
-            GrupRepository(RetrofitClient.getInstance(this))
-        )
+        SearchViewModelFactory(GrupRepository(RetrofitClient.getInstance(this)))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +45,7 @@ class SearchActivity : AppCompatActivity() {
         btnSearch = findViewById(R.id.btnSearch)
         btnBack = findViewById(R.id.btnBack)
         tvEmpty = findViewById(R.id.tvEmpty)
+        layoutEmpty = findViewById(R.id.layoutEmpty) // Inisialisasi layout pembungkus
     }
 
     private fun setupRecyclerView() {
@@ -54,40 +54,31 @@ class SearchActivity : AppCompatActivity() {
             intent.putExtra("ID_GRUP", grup.id_grup)
             startActivity(intent)
         }
-
         rvSearch.layoutManager = LinearLayoutManager(this)
         rvSearch.adapter = adapter
     }
 
     private fun setupAction() {
-
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnSearch.setOnClickListener {
             val keyword = etSearch.text.toString().trim()
-
             if (keyword.isEmpty()) {
                 Toast.makeText(this, "Masukkan kata kunci", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             viewModel.search(keyword)
         }
     }
 
     private fun observeViewModel() {
-
         viewModel.searchResult.observe(this) { data ->
-
             adapter.updateData(data)
-
-            if (data.isEmpty()) {
-                tvEmpty.visibility = View.VISIBLE
+            if (data.isNullOrEmpty()) {
+                layoutEmpty.visibility = View.VISIBLE
                 rvSearch.visibility = View.GONE
             } else {
-                tvEmpty.visibility = View.GONE
+                layoutEmpty.visibility = View.GONE
                 rvSearch.visibility = View.VISIBLE
             }
         }

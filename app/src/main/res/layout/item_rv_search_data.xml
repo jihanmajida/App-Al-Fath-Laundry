@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:layout_margin="8dp" app:cardCornerRadius="8dp" app:cardElevation="4dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeColor="#F0F0F0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <!-- Text Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -23,22 +28,28 @@
                 android:id="@+id/tvJudul"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kamar"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:fontFamily="sans-serif-black"
+                android:text="Kamar 302"
+                android:textColor="#333333"
+                android:textSize="16sp" />
 
-            <TextView android:id="@+id/tvNama"
+            <TextView
+                android:id="@+id/tvNama"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="nama1, nama2, nama3"
-                android:textSize="14sp"/>
+                android:layout_marginTop="2dp"
+                android:text="Budi, Agus, Siti"
+                android:textColor="#757575"
+                android:textSize="14sp" />
         </LinearLayout>
-        <!-- See Button -->
-        <ImageButton
+
+        <ImageView
             android:id="@+id/btnShow"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:alpha="0.4"
             android:src="@drawable/ic_next"
-            android:background="@android:color/transparent"/>
+            app:tint="@color/black" />
+
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

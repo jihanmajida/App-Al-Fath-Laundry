@@ -1,104 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F9FA"
     tools:context=".ui.home.HomeActivity">
 
-    <!--Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--Toolbar-->
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_toolbar">
+            app:cardElevation="4dp"
+            app:cardCornerRadius="0dp"
+            app:contentPadding="8dp">
 
-            <!--Previous-->
-            <ImageButton
-                android:id="@+id/btnPrev"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_prev"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
-                android:padding="8dp"/>
-
-            <!-- TEXT TANGGAL -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                 <TextView
-                  android:id="@+id/tvHari"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textStyle="bold"
-                  android:textSize="16sp"
-                  android:text="Senin"/>
-                <TextView
-                    android:id="@+id/tvTanggal"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnPrev"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_prev"
+                        app:tint="#444444" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvHari"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-black"
+                            android:text="Senin"
+                            android:textColor="#212121"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvTanggal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.6"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="12 Januari 2026"
+                            android:textColor="#000000"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnNext"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_next"
+                        app:tint="#444444" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="12 Januari 2026"
-                    android:textSize="14sp"/>
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnSearch"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_search"
+                        app:tint="#2196F3" />
+
+                    <ImageButton
+                        android:id="@+id/btnLogOut"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_logout"
+                        app:tint="#F44336" />
+                </LinearLayout>
+
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <!--Next-->
-            <ImageButton
-                android:id="@+id/btnNext"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_next"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
-                android:padding="8dp"/>
-
-            <!--Search-->
-            <ImageButton
-                android:id="@+id/btnSearch"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_search"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
-                android:padding="8dp"/>
-
-            <!--LogOut-->
-            <ImageButton
-                android:id="@+id/btnLogOut"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_logout"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
-                android:padding="8dp"/>
-        </LinearLayout>
-
-        <!-- FRAGMENT CONTAINER -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 
-    <!-- FLOATING ACTION BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabTambah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:layout_gravity="bottom|end"
-        android:src="@android:drawable/ic_input_add"/>
+        android:layout_margin="24dp"
+        android:contentDescription="Tambah Data"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#2196F3"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:tint="@color/white" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

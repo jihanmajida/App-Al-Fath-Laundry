@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,35 +19,30 @@ class SearchAdapter(
     private var listGrup: List<GrupWithCustomer> = emptyList()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         private val tvJudul: TextView = itemView.findViewById(R.id.tvJudul)
         private val tvNama: TextView = itemView.findViewById(R.id.tvNama)
-        private val btnShow: ImageButton = itemView.findViewById(R.id.btnShow)
+        private val btnShow: ImageView = itemView.findViewById(R.id.btnShow) // Sesuai tipe XML
 
         fun bind(data: GrupWithCustomer) {
-
-            // Judul lebih informatif
             tvJudul.text = "${data.kamar} - ${data.tanggal}"
 
-            // Gabungkan nama pelanggan
             val namaList = data.pelanggan
                 ?.map { it.nama_pelanggan }
                 ?.filter { !it.isNullOrEmpty() }
                 ?.joinToString(", ")
 
-            tvNama.text = if (namaList.isNullOrEmpty()) {
-                "Tidak ada pelanggan"
-            } else {
-                namaList
-            }
+            tvNama.text = if (namaList.isNullOrEmpty()) "Tidak ada pelanggan" else namaList
 
-            btnShow.setOnClickListener {
-                onClick(data)
-            }
+            // Klik pada icon
+            btnShow.setOnClickListener { onClick(data) }
+
+            // Klik pada seluruh kartu agar user tidak susah membidik icon
+            itemView.setOnClickListener { onClick(data) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        // Pastikan nama file XML item-nya benar
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_rv_search_data, parent, false)
         return ViewHolder(view)
@@ -59,21 +55,14 @@ class SearchAdapter(
     }
 
     fun updateData(newList: List<GrupWithCustomer>) {
-
         val diffCallback = object : DiffUtil.Callback() {
             override fun getOldListSize() = listGrup.size
             override fun getNewListSize() = newList.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return listGrup[oldItemPosition].id_grup ==
-                        newList[newItemPosition].id_grup
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return listGrup[oldItemPosition] == newList[newItemPosition]
-            }
+            override fun areItemsTheSame(oldPos: Int, newPos: Int) =
+                listGrup[oldPos].id_grup == newList[newPos].id_grup
+            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+                listGrup[oldPos] == newList[newPos]
         }
-
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         listGrup = newList
         diffResult.dispatchUpdatesTo(this)
