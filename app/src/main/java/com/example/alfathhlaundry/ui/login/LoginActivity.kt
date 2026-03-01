@@ -1,9 +1,10 @@
 package com.example.alfathhlaundry.ui.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log // 🔥 TAMBAHAN
+import android.util.Log
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
@@ -16,13 +17,26 @@ import com.example.alfathhlaundry.ui.home.HomeActivity
 import com.example.alfathhlaundry.utils.Resource
 
 class LoginActivity : AppCompatActivity() {
-    val apiService = RetrofitClient.getInstance(this)
-    val repository = AuthRepository(apiService)
+
+    // Menggunakan lazy agar apiService diinisialisasi saat dibutuhkan
+    private val apiService by lazy { RetrofitClient.getInstance(this) }
+    private val repository by lazy { AuthRepository(apiService) }
+
     private val viewModel: LoginViewModel by viewModels {
         LoginViewModelFactory(repository)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // --- LOGIKA AUTO-LOGIN ---
+        val prefs = getSharedPreferences("SESSION", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("IS_LOGIN", false)) {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
+            return // Keluar dari onCreate agar tidak render layout login
+        }
+
         setContentView(R.layout.activity_login)
 
         val etEmail = findViewById<EditText>(R.id.etEmail)
@@ -30,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnLogin.setOnClickListener {
-
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
@@ -42,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Format email tidak valid", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    Log.d("LOGIN_UI", "Button clicked") // 🔥 TAMBAHAN
+                    Log.d("LOGIN_UI", "Mencoba login dengan email: $email")
                     viewModel.login(email, password)
                 }
             }
@@ -53,50 +66,43 @@ class LoginActivity : AppCompatActivity() {
 
     private fun observeLogin() {
         viewModel.loginResult.observe(this) { result ->
-
-            Log.d("LOGIN_UI", "State: $result") // 🔥 TAMBAHAN (WAJIB)
+            Log.d("LOGIN_UI", "Status Login: $result")
 
             when (result) {
                 is Resource.Loading -> {
-                    Log.d("LOGIN_UI", "Loading...") // 🔥 TAMBAHAN
-                    // ProgressBar optional
+                    Log.d("LOGIN_UI", "Sedang memproses...")
+                    // Di sini kamu bisa tampilkan ProgressBar.setEnabled(true)
                 }
 
                 is Resource.Success -> {
-
                     val token = result.data.access_token
 
-                    // 🔥 TAMBAHAN: validasi token
-                    if (token.isEmpty()) {
-                        Toast.makeText(this, "Token kosong", Toast.LENGTH_SHORT).show()
+                    if (token.isNullOrEmpty()) {
+                        Log.e("LOGIN_UI", "Token null atau kosong dari server")
+                        Toast.makeText(this, "Gagal mendapatkan akses token", Toast.LENGTH_SHORT).show()
                         return@observe
                     }
 
-                    Log.d("LOGIN_UI", "Login sukses, token: $token") // 🔥 TAMBAHAN
+                    Log.d("LOGIN_UI", "Login Berhasil! Menyimpan token.")
 
-                    // Simpan session
-                    getSharedPreferences("SESSION", MODE_PRIVATE)
+                    // --- SIMPAN SESSION ---
+                    getSharedPreferences("SESSION", Context.MODE_PRIVATE)
                         .edit()
                         .putString("TOKEN", token)
                         .putBoolean("IS_LOGIN", true)
                         .apply()
 
-                    // 🔥 PINDAH HALAMAN (INI KUNCI)
-                    val intent = Intent(this, HomeActivity::class.java)
-                    intent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    // --- PINDAH HALAMAN & CLEAR STACK ---
+                    val intent = Intent(this, HomeActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
                     startActivity(intent)
-
-                    finish() // 🔥 TAMBAHAN (BIAR TIDAK BISA BACK KE LOGIN)
+                    finish()
                 }
 
                 is Resource.Error -> {
-                    Log.e("LOGIN_UI", "Error: ${result.message}") // 🔥 TAMBAHAN
-                    Toast.makeText(
-                        this,
-                        result.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.e("LOGIN_UI", "Error Login: ${result.message}")
+                    Toast.makeText(this, "Login Gagal: ${result.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
